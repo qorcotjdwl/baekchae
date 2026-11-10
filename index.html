@@ -118,15 +118,57 @@ nav.tabs button.on{color:var(--ink);font-weight:700}
 .inline{display:flex;gap:8px}.inline>*{flex:1}
 .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:20px;font-size:13px;opacity:0;transition:.2s;pointer-events:none;z-index:30}
 .toast.show{opacity:1}
-.seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:4px}
+
+/* ===== 2026-11-11 흑백 C-3 디자인 ===== */
+nav.tabs button{padding:16px 0 20px;font-size:14px;color:#9a9288}
+nav.tabs button:before{content:'';display:block;width:6px;height:6px;border-radius:50%;margin:0 auto 6px;background:transparent}
+nav.tabs button.on{color:var(--ink);font-weight:700}nav.tabs button.on:before{background:var(--ink)}
+.dnav{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 10px}
+.dnav .dc{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ink);background:none;font-size:18px;color:var(--ink);flex:none}
+.dnav .dm{border:none;background:none;text-align:center;color:var(--ink)}.dnav .dd{font-size:21px;font-weight:900}.dnav .ds{font-size:12px;color:var(--sub)}
+.ph{background:#fff;border:1.5px solid var(--ink);border-radius:24px;padding:20px 18px 16px;text-align:center;margin-bottom:12px}
+.ph-t{font-size:13px;color:var(--sub)}.ph-clock{font-size:52px;font-weight:900;letter-spacing:-1px;line-height:1.15}
+.ph-line{font-size:14px;margin:6px 0 12px;min-height:20px}.ph-line b{font-size:16px}
+.ph-btn{width:100%;border:2px solid var(--ink);background:var(--ink);color:#fff;border-radius:16px;padding:18px 0;font-size:22px;font-weight:900}
+.ph-btn.out{background:#fff;color:var(--ink)}
+.ph-sub{font-size:12px;color:var(--sub);margin-top:10px}
+.lcard{background:#fff;border-radius:18px;padding:0 16px;margin-bottom:14px}
+.lrow{display:flex;width:100%;align-items:center;justify-content:space-between;padding:17px 0;border:none;border-bottom:1px solid #eee7dd;background:none;font-size:17px;font-weight:700;color:var(--ink);text-align:left}
+.lrow:last-child{border-bottom:none}.lr{display:flex;align-items:center;gap:10px}.ar{font-size:20px}
+.cnt-b{min-width:24px;height:24px;line-height:24px;border-radius:12px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:0 7px;text-align:center}
+.done-t{font-size:13px;color:var(--sub);font-weight:500}.hint-t{font-size:11px;color:var(--sub);font-weight:500}
+.wcard{padding:0 4px 10px}.wh{font-size:12px;color:var(--sub);margin-bottom:2px}
+.wrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.wn{display:flex;align-items:center;gap:10px}.wk{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:900;flex:none}
+.wrow.wait{color:#bdb5aa}.wrow.wait .wk{border:1.5px solid #d6cec3}
+.wrow.on{font-weight:800}.wrow.on .wk{background:var(--ink);color:#fff}
+.wrow.off{color:#bdb5aa}.wrow.off .wt{color:#9a9288}.wrow.off .wk{background:#d6cec3;color:#fff}
+/* 체크 항목 흑백 */
+.task.done .box{background:var(--ink);border-color:var(--ink)}
+.task .box{border-color:var(--ink)}
+.task .who{color:var(--ink)}
+.task .must{background:none;border:1.5px solid var(--ink);color:var(--ink)}
+.task .cam{display:inline-flex;align-items:center;gap:3px;color:var(--ink);border:1.5px solid var(--ink);border-radius:9px;padding:5px 7px}
+.task .cam .cc{font-size:11px}
+.lc{font-size:12px;color:var(--sub);margin:5px 0 0 36px}.lc b{color:var(--ink)}
+.stale{display:inline-block;background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin:6px 0 0 36px}
+.task .tip{border-left:2px solid var(--ink);padding-left:10px;color:var(--ink)}
+.task .tip .oven{margin-top:8px;padding-top:8px;border-top:1px dashed #c9c1b5;font-weight:700;white-space:pre-line}
+.re.mine{background:#ece7df;border-color:var(--ink);color:var(--ink)}
+.msg.ok{background:#ece7df;color:var(--ink)}
+.seg{background:#fff}.tag{color:var(--ink)}
+.sech{font-size:24px}
+.cal .c .mk span{display:inline-block;font-size:9px;font-weight:700;border:1px solid var(--ink);border-radius:4px;padding:0 3px;margin-right:2px;color:var(--ink)}
+.cal .c.sun .d,.cal .c.sat .d{color:var(--ink)}.cal .h:first-child,.cal .h:last-child{color:var(--sub)}
+.seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
 <nav class="tabs" id="tabs" style="display:none"><div>
-  <button data-tab="day" class="on"><b>📅</b>오늘</button>
-  <button data-tab="month"><b>🗓️</b>달력</button>
-  <button data-tab="admin" id="tabAdmin"><b>⚙️</b>관리</button>
+  <button data-tab="day" class="on">오늘</button>
+  <button data-tab="month">달력</button>
+  <button data-tab="admin" id="tabAdmin">관리</button>
 </div></nav>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
@@ -153,22 +195,28 @@ const db = getFirestore(fb);
 const MAX_STAFF = 10, PHOTO_DAYS = 7;
 const DOW = ['일','월','화','수','목','금','토'];
 const REACT = [['ok','✅'],['good','👍'],['thx','🙏']];
+/* 청소 체크리스트 — 2026-11-10 사장님 확정 문구
+   elec: 전자기기, glass: 창문 → 3일 이상이어도 오븐클리너 안내 없이 경고만 */
+const SPRAY='파채 기계 옆 분무기를 뿌려서';
+const REFILL='※ 분무기가 비어 있으면 퐁퐁 20번 이상 짜 넣고 물 채우기';
 const TASKS = [
- {id:'bab',name:'밥통 (홀·주방 2개)',tip:'밥통 2개 위쪽·옆면을 퐁퐁 또는 락스로 닦기\n밥통 안쪽 이물질 제거\n밥통을 옆으로 치우고 아래 바닥도 닦기\n주의: 물자국이 안 남게'},
- {id:'pos',name:'포스기·단말기·키보드·전화기',tip:'물티슈 또는 행주에 퐁퐁/락스를 묻혀 닦기\n주의: 물자국이 안 남게'},
- {id:'door',name:'현관 창문',must:true,tip:'창문 클리너 + 파란색 극세사 수건\n필수: 현관은 하루 한 번 꼭'},
- {id:'win',name:'나머지 창문',tip:'창문 클리너 + 파란색 극세사 수건\n닦고 물자국 확인\n바빠서 못 하면 다음 근무자에게 인수인계'},
- {id:'water',name:'정수기',tip:'물티슈 또는 행주에 퐁퐁/락스를 묻혀 전체적으로 닦기'},
- {id:'fridge',name:'홀 냉장고 3개',tip:'물티슈 또는 행주에 퐁퐁/락스를 묻혀 전체적으로 닦기\n주의: 물자국이 안 남게'},
- {id:'ac',name:'에어컨 2개',tip:'물티슈 또는 행주에 퐁퐁/락스를 묻혀 전체적으로 닦기\n주의: 물자국이 안 남게'},
- {id:'shelf',name:'주방 선반 (찌개·반찬·계란말이)',tip:'행주에 락스를 뿌려 닦기\n팁: 잘 안 닦이면 수세미로 밀기'},
+ {id:'bab',name:'밥통 (홀·주방 2개)',tip:`밥통 2개 위쪽·옆면을 ${SPRAY} 닦기\n${REFILL}\n밥통 안쪽 이물질 제거\n밥통을 옆으로 치우고 아래 바닥도 닦기\n주의: 물자국이 안 남게`},
+ {id:'pos',name:'포스기·단말기·키보드·전화기',elec:true,tip:`파채 기계 옆 분무기로 닦기\n⚠ 기계에 직접 뿌리지 말 것\n${REFILL}\n주의: 물자국이 안 남게`},
+ {id:'door',name:'현관 창문',must:true,glass:true,tip:'분무기 + 물기 제거 스퀴지\n※ 물자국 남았나 확인 후, 물자국 있는 곳은 극세사 수건으로 닦기\n필수: 현관은 하루 한 번 꼭'},
+ {id:'win',name:'나머지 창문',glass:true,tip:'분무기 + 물기 제거 스퀴지\n※ 물자국 남았나 확인 후, 물자국 있는 곳은 극세사 수건으로 닦기\n바빠서 못 하면 다음 근무자에게 인수인계'},
+ {id:'water',name:'정수기',elec:true,tip:`${SPRAY} 전체적으로 닦기\n${REFILL}`},
+ {id:'fridge',name:'홀 냉장고 3개',elec:true,tip:`${SPRAY} 전체적으로 닦기\n${REFILL}\n주의: 물자국이 안 남게`},
+ {id:'ac',name:'에어컨 2개',elec:true,tip:`파채 기계 옆 분무기를 행주에 뿌려서 전체적으로 닦기\n${REFILL}\n주의: 물자국이 안 남게`},
+ {id:'shelf',name:'주방 선반 (찌개·반찬·계란말이)',tip:`행주에 파채 기계 옆 분무기를 뿌려서 닦기\n${REFILL}`},
  {id:'tray',name:'찌개 쟁반',tip:'수세미로 닦은 후 식기세척기\n참고: 세척 끝난 것과 못 닦은 쟁반을 교체해 가며 나머지도 닦기'},
  {id:'tool',name:'가위·집게·국자·수저·젓가락 통',tip:'수세미로 닦고 식기세척기\n세척 후 물기 제거, 식기 다시 채우기'},
- {id:'wc',name:'화장실',tip:'락스로 전체적으로 닦기\n참고: 청소 도구는 세면대 옆'},
+ {id:'wc',name:'화장실',tip:`${SPRAY} 전체적으로 닦기\n${REFILL}\n참고: 청소 도구는 세면대 옆`},
  {id:'fire',name:'홀 화구',tip:'물티슈로 안쪽 이물질 제거\n주의: 선 건드리지 않기 (빠지면 불 안 나옴)'},
- {id:'fan',name:'홀 환풍기',tip:'비닐장갑 필수, 구멍에 손가락 넣어 기름 제거\n주의: 손님 없는 쪽부터 (4번에 손님 → 7~10번 쪽)\n사용한 의자도 꼭 닦기'},
+ {id:'fan',name:'홀 환풍기',tip:'오븐클리너 뿌린 후 구멍에 손가락 넣어 기름 제거\n※ 장갑 필수\n주의: 손님 없는 쪽부터 (4번에 손님 → 7~10번 쪽)\n사용한 의자도 꼭 닦기'},
  {id:'light',name:'홀 전등',tip:'행주로 전등 외관 닦기\n주의: 손님 없는 쪽부터\n필수: 사용한 의자도 꼭 닦기'},
 ];
+const STALE_DAYS=3;
+const OVEN_TIP='3일 이상 → 오븐클리너 분무기로 닦기\n⚠ 오븐클리너는 강하니까 꼭 장갑 끼고 닦기\n※ 오븐클리너가 비어 있으면 싱크대 아래 말통에서 분무기에 부어서 사용';
 
 
 
@@ -204,7 +252,7 @@ const DUTIES={
   {id:'cl_floor',name:'주방 바닥 청소',tip:'물 전체적으로 뿌리며 큰 건더기 쓸기 → 락스 뿌리고 밀대로 청소'},
   {id:'cl_trash',name:'쓰레기 마감',sunday:true,tip:'일요일에 하기\n일반 쓰레기 (홀, 화구, 화장실, 주방), 재활용, 음식물 쓰레기'},
   {id:'cl_off',name:'간판, 선풍기, 에어컨 끄기',tip:'선풍기: 주방, 수저선반, 천장형'},
-  {id:'cl_handover',name:'인수인계 (다음 아침 근무자에게)',tip:'확인할 것: 찌개, 1인분 고기 통, 세절, 두부, 계란, 단무지, 홀 김가루, 포장용 김가루, 마늘, 재료 손질할 것들\n※ 급한 거 있는지 체크 후, 어떤 게 급한지 알려주기\n→ 💬 댓글로 남기면 인수인계에 바로 올라가요'},
+  {id:'cl_handover',name:'인수인계 (다음 아침 근무자에게)',tip:'확인할 것: 찌개, 1인분 고기 통, 세절, 두부, 계란, 단무지, 홀 김가루, 포장용 김가루, 마늘, 재료 손질할 것들\n※ 급한 거 있는지 체크 후, 어떤 게 급한지 알려주기\n→ 댓글로 남기면 인수인계에 바로 올라가요'},
   {id:'cl_pan',name:'프라이팬',tip:'코팅용 수세미로 닦고, 뒤집어서 놓기'},
   {id:'cl_towel',name:'행주 삶기',tip:'짬통 옆 양푼에 퐁퐁 6~8번 넣고 삶은 후 선반에 펼쳐서 말리기'},
   {id:'cl_gas',name:'주방 가스배관',must:true,tip:'총 3개 (찌개 끓이는 쪽, 육수, 계란말이 쪽)'},
@@ -216,11 +264,16 @@ const DUTY_LABEL={am:'오전',pm:'오후',cl:'마감'};
 const ALL_ITEMS=()=>[...TASKS,...DUTIES.am,...DUTIES.pm,...DUTIES.cl];
 const itemName=id=>{const t=ALL_ITEMS().find(x=>x.id===id);if(!t)return '';const sh=id.startsWith('am_')?'[오전] ':id.startsWith('pm_')?'[오후] ':id.startsWith('cl_')?'[마감] ':'[청소] ';return sh+t.name;};
 let dutyTab=new Date().getHours()<15?'am':'pm', openCmt=new Set();
+const ICON={
+ cam:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+ cmt:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+ img:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg>'};
 /* ===== 상태 ===== */
 const S = { settings:{wage:14000,payTol:0,lat:37.5487,lng:126.9127,radius:100,cutoff:5,demo:false,locSet:false,store:'백채 김치찌개 · 서울 마포구 성지길 24 1층'},
   users:[], schedule:{}, tasks:{}, attendance:[], handovers:[] };
 let me=null, myId=null, tab='day', detail=false, cat=null, viewDate=null, viewMonth=null, pick=null;
 let unsubs=[], monthUnsubs=[], subMonth=null, ready=false;
+S.recent={};
 
 /* ===== 도우미 ===== */
 const $=id=>document.getElementById(id);
@@ -309,7 +362,7 @@ function renderLogin(mode){
   }
   const act=S.users.filter(u=>u.status==='active').sort((a,b)=>a.role==='admin'?-1:b.role==='admin'?1:0);
   app.innerHTML=`<div class="login"><h1>백채 근무일지</h1><p>이름을 고르고 비밀번호를 입력하세요.</p>
-    <div class="chips">${act.map(u=>`<button class="chip" data-id="${u.id}">${esc(u.name)}${u.role==='admin'?' 👑':''}</button>`).join('')}</div>
+    <div class="chips">${act.map(u=>`<button class="chip" data-id="${u.id}">${esc(u.name)}${u.role==='admin'?' (관리자)':''}</button>`).join('')}</div>
     <div class="field"><input id="pin" class="pin" inputmode="numeric" maxlength="4" type="password" placeholder="••••"></div>
     <button class="btn full" id="go">들어가기</button><div class="msg" id="lm"></div>
     <button class="link" id="join">처음이신가요? 가입 신청</button></div>`;
@@ -336,7 +389,14 @@ function enter(id){
   unsubs.push(onSnapshot(doc(db,'settings','main'),s=>{if(s.exists())Object.assign(S.settings,s.data());
     if(!ready){ready=true;viewDate=bizDate(new Date());tab='day';detail=false;cat=null;lastBiz=viewDate;}
     ensureMonth();render();},fail));
+  unsubs.push(onSnapshot(query(collection(db,'days'),where(documentId(),'>=',addDays(bizDate(new Date()),-35))),snap=>{
+    S.recent={};snap.docs.forEach(d=>{S.recent[d.id]=d.data().tasks||{}});render();},fail));
   if(isAdmin()) cleanupPhotos();
+}
+/* 마지막 청소: upto 날짜 포함, 최근 35일 안에서 가장 최근 기록 */
+function lastClean(id,upto){
+  for(let i=0;i<=35;i++){const d=addDays(upto,-i);const t=(S.tasks[d]&&S.tasks[d][id])||(S.recent[d]&&S.recent[d][id]);if(t)return {date:d,days:i,uid:t.uid,at:t.at};}
+  return null;
 }
 function ensureMonth(){
   const m=(tab==='month'&&viewMonth)?viewMonth:(viewDate||ymd(new Date())).slice(0,7);
@@ -391,19 +451,29 @@ function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   <button class="edit" data-edit="${h.id}">수정</button></div>
   ${seen.length?`<div class="seen">${seen.map(([k,e])=>e+' '+h.re[k].map(uname).join(', ')).join(' · ')}</div>`:'<div class="seen">아직 아무도 확인 안 함</div>'}</div>`;}
 /* 체크 항목 한 줄 (청소·근무 공통) */
-function itemRow(t,r,cmts){const open=openCmt.has(t.id);
+function itemRow(t,r,cmts,o={}){const open=openCmt.has(t.id);
   return `<div class="task ${r?'done':''}" id="t_${t.id}"><div class="top">
     <button class="box" data-task="${t.id}">${r?'✓':''}</button>
-    <div class="name">${t.name}${t.must?'<span class="must">매일 필수</span>':''}${t.sunday?'<span class="must" style="background:#e8eefc;color:var(--blue)">일요일</span>':''}</div>
-    ${r&&r.photo?`<button class="cam" data-view="${t.id}" aria-label="사진 보기">🖼️</button>`:''}
-    ${r?`<div class="who">${esc(uname(r.uid))}<br><span style="font-weight:400">${hm(r.at)}</span></div>`:''}
-    <label class="cam" aria-label="사진 올리기">📷<input type="file" accept="image/*" data-cam="${t.id}"></label>
-    ${cmts?`<button class="cam" data-cmt="${t.id}" aria-label="댓글">💬${cmts.length?' '+cmts.length:''}</button>`:''}
+    <div class="name">${t.name}${t.must?'<span class="must">매일 필수</span>':''}${t.sunday?'<span class="must">일요일</span>':''}</div>
+    ${r&&r.photo?`<button class="cam" data-view="${t.id}" aria-label="사진 보기">${ICON.img}</button>`:''}
+    ${r&&!o.meta?`<div class="who">${esc(uname(r.uid))}<br><span style="font-weight:400">${hm(r.at)}</span></div>`:''}
+    <label class="cam" aria-label="사진 올리기">${ICON.cam}<input type="file" accept="image/*" data-cam="${t.id}"></label>
+    ${cmts?`<button class="cam" data-cmt="${t.id}" aria-label="댓글">${ICON.cmt}${cmts.length?'<b class="cc">'+cmts.length+'</b>':''}</button>`:''}
     ${t.tip?`<button class="more" data-tip="${t.id}">방법</button>`:''}</div>
-    ${t.tip?`<div class="tip">${t.tip}</div>`:''}
+    ${o.meta?`<div class="lc">${o.meta}</div>`:''}
+    ${o.warn?`<div class="stale">3일 이상 청소 안 됨</div>`:''}
+    ${t.tip?`<div class="tip">${t.tip}${o.oven?`<div class="oven">${OVEN_TIP}</div>`:''}</div>`:''}
     ${cmts&&open?`<div class="cmts">${cmts.map(hoCard).join('')}
       <textarea class="keep" id="cmt_${t.id}" placeholder="이 일에 대해 남길 말 (못 한 이유, 다음 근무자 부탁 등)"></textarea>
       <button class="btn sm full" data-cmtadd="${t.id}" style="margin-top:6px">댓글 남기기</button></div>`:''}</div>`;}
+/* 출퇴근 기록 → 근무 구간·분 */
+function shiftsOf(evs){const pairs=[];let cur=null;
+  evs.forEach(e=>{if(e.type==='in'){if(cur)pairs.push({in:cur,out:null});cur=e}else{pairs.push({in:cur,out:e});cur=null}});
+  if(cur)pairs.push({in:cur,out:null});
+  const min=pairs.reduce((a,p)=>a+(p.in&&p.out?Math.max(0,Math.round((new Date(p.out.at)-new Date(p.in.at))/60000)):0),0);
+  return {pairs,min};}
+const fmtMin=m=>m>=60?`${Math.floor(m/60)}시간${m%60?` ${m%60}분`:''}`:`${m}분`;
+const nowHM=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
 function renderDay(){
   const d=parse(viewDate), today=bizDate(new Date()), isToday=viewDate===today, dow=d.getDay();
   const sched=S.schedule[viewDate]||[];
@@ -414,63 +484,81 @@ function renderDay(){
   const ids=[...new Set([...sched.map(s=>s.u),...att.map(a=>a.uid)])];
   const people=ids.map(id=>{const s=sched.find(x=>x.u===id);const a=att.filter(x=>x.uid===id);
     const ins=a.filter(x=>x.type==='in'),outs=a.filter(x=>x.type==='out');
-    return {id,plan:s?`${s.s}~${s.e}`:'근무표 없음',in:ins[0],out:outs[outs.length-1],cur:a.length&&a[a.length-1].type==='in'}});
+    const sh=shiftsOf(a);
+    return {id,plan:s?`${s.s} ~ ${s.e}`:'근무표 없음',in:ins[0],out:outs[outs.length-1],cur:a.length&&a[a.length-1].type==='in',min:sh.min}});
   const doneCnt=TASKS.filter(t=>taskDone[t.id]).length;
   if(!detail) return `<button class="cover" id="cover">
     <div class="ym">${d.getFullYear()}년 ${d.getMonth()+1}월</div><div class="day">${d.getDate()}</div>
     <div class="dow ${dow===0?'sun':dow===6?'sat':''}">${DOW[dow]}요일</div><div class="hint">눌러서 오늘 근무 보기</div></button>`;
 
-  const secPunch=`${isToday?`<div class="card"><h3>출퇴근 <span class="cnt">매장 반경 ${S.settings.radius}m</span></h3>
-    <div class="punch"><button class="in" id="pin_" ${working?'disabled':''}>출근</button><button class="out" id="pout" ${working?'':'disabled'}>퇴근</button></div>
-    <div class="msg ${punchMsg&&punchMsg.until>Date.now()?'show '+punchMsg.cls:''}" id="pm">${punchMsg&&punchMsg.until>Date.now()?esc(punchMsg.text):''}</div></div>`:''}
-  <div class="card"><h3>근무자 <span class="cnt">${people.length}명</span></h3>
-    ${people.length?people.map(p=>`<div class="row"><div class="shift"><span class="dot ${p.cur?'on':p.out?'done':''}"></span><div><div class="n">${esc(uname(p.id))}</div><div class="t">예정 ${p.plan}</div></div></div>
-      <div class="t" style="text-align:right">${p.in?'출근 '+hm(p.in.at)+(p.in.edits.length?' ✎':''):'미출근'}<br>${p.out?'퇴근 '+hm(p.out.at)+(p.out.edits.length?' ✎':''):p.cur?'<b style="color:var(--green)">근무 중</b>':''}</div></div>`).join(''):'<div class="t">이날 근무표가 없어요.</div>'}
-  </div>`;
   const secHo=`<div class="card"><h3>인수인계 <span class="cnt">${hos.length}건</span></h3>
     ${hos.map(hoCard).join('')}
     <textarea id="hotext" placeholder="다음 근무자에게 남길 말 (재고, 못 끝낸 청소, 특이사항…)"></textarea>
     <button class="btn full" id="hoadd" style="margin-top:8px">인수인계 남기기</button></div>`;
+  const cleanOpt=t=>{const r=taskDone[t.id];
+    if(r) return {meta:`${isToday?'오늘':'이날'} ${hm(r.at)} · <b>${esc(uname(r.uid))}</b>`};
+    const lc=lastClean(t.id,addDays(viewDate,-1));
+    if(!lc) return {meta:'아직 청소 기록 없음'};
+    const days=lc.days+1, warn=days>=STALE_DAYS;
+    return {meta:`마지막 청소: <b>${days===1?'어제':days+'일 전'} · ${esc(uname(lc.uid))}</b>`,warn,oven:warn&&!t.elec&&!t.glass};};
   const secClean=`<div class="card"><h3>청소 체크리스트 <span class="cnt">${doneCnt}/${TASKS.length} 완료</span></h3>
-    <div class="t" style="font-size:12px;margin-bottom:6px">손님 없고 한가할 때 · 위에서 아래 순서로 · 못 끝낸 건 인수인계에 남기기<br>📷 청소한 곳 사진을 올리면 자동으로 완료 체크돼요 (사진은 ${PHOTO_DAYS}일 보관)</div>
-    ${TASKS.map(t=>itemRow(t,taskDone[t.id],hos.filter(h=>h.item===t.id))).join('')}</div>`;
+    <div class="t" style="font-size:12px;margin-bottom:6px">손님 없고 한가할 때 · 위에서 아래 순서로 · 못 끝낸 건 인수인계에 남기기<br>사진을 올리면 자동으로 완료 체크돼요 (사진은 ${PHOTO_DAYS}일 보관)</div>
+    ${TASKS.map(t=>itemRow(t,taskDone[t.id],hos.filter(h=>h.item===t.id),cleanOpt(t))).join('')}</div>`;
   const dDone=k=>DUTIES[k].filter(t=>taskDone[t.id]).length;
   const secDuty=`<div class="seg">${['am','pm'].map(k=>`<button class="${dutyTab===k?'on':''}" data-duty="${k}">${DUTY_LABEL[k]} 근무 <small>${dDone(k)}/${DUTIES[k].length}</small></button>`).join('')}</div>
    <div class="card"><h3>${DUTY_LABEL[dutyTab]} 근무 체크 <span class="cnt">${dDone(dutyTab)}/${DUTIES[dutyTab].length} 완료</span></h3>
-    <div class="t" style="font-size:12px;margin-bottom:6px">체크하면 이름·시간이 남아요 · 📷 사진 올리면 자동 체크 · 💬 못 한 일은 댓글로 다음 근무자에게${dutyTab==='am'?'<br>※ 못 한 건 오후 근무자랑 같이 하기':''}</div>
+    <div class="t" style="font-size:12px;margin-bottom:6px">체크하면 이름·시간이 남아요 · 사진 올리면 자동 체크 · 못 한 일은 댓글로 다음 근무자에게${dutyTab==='am'?'<br>※ 못 한 건 오후 근무자랑 같이 하기':''}</div>
     ${DUTIES[dutyTab].map(t=>itemRow(t,taskDone[t.id],hos.filter(h=>h.item===t.id))).join('')}</div>`;
   const isSun=dow===0, clList=DUTIES.cl.filter(t=>!t.sunday||isSun);
   const clDone=clList.filter(t=>taskDone[t.id]).length;
   const secClose=`<div class="card"><h3>마감 체크리스트 <span class="cnt">${clDone}/${clList.length} 완료</span></h3>
-    <div class="t" style="font-size:12px;margin-bottom:6px">하나씩 체크하면서 할 것 · 📷 사진 올리면 자동 체크 · 💬 댓글은 다음 아침 근무자에게 인수인계로 전달돼요${isSun?'':'<br>쓰레기 마감은 일요일 항목이라 오늘 완료 개수에서 빠져요'}</div>
+    <div class="t" style="font-size:12px;margin-bottom:6px">하나씩 체크하면서 할 것 · 사진 올리면 자동 체크 · 댓글은 다음 아침 근무자에게 인수인계로 전달돼요${isSun?'':'<br>쓰레기 마감은 일요일 항목이라 오늘 완료 개수에서 빠져요'}</div>
     ${DUTIES.cl.map(t=>itemRow(t,taskDone[t.id],hos.filter(h=>h.item===t.id))).join('')}</div>`;
   const working_n=people.filter(p=>p.cur).length;
   const unseen=hos.filter(h=>!REACT.some(([k])=>(h.re[k]||[]).includes(myId))).length;
   if(cat){
-    const titles={punch:'⏰ 출퇴근',duty:'📋 근무 체크',close:'🌙 마감',ho:'📝 인수인계',clean:'🧹 청소'};
+    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소'};
     return `<button class="back" id="back">‹ ${d.getMonth()+1}월 ${d.getDate()}일 목록으로</button>
     <h2 class="sech">${titles[cat]}</h2><div class="t" style="color:var(--sub);font-size:13px">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div style="height:10px"></div>
-    ${S.settings.demo&&cat==='punch'?'<div class="demo">시연 모드 켜짐: 위치 확인이 안 되면 그냥 통과돼요. 관리 메뉴에서 끌 수 있어요.</div>':''}
-    ${cat==='punch'?secPunch:cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:secClean}`;
+    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:secClean}`;
   }
-  return `<button class="back" id="back">‹ 날짜 화면으로</button>
-  <div class="card hero"><div class="ym">${d.getFullYear()}년 ${d.getMonth()+1}월 ${isToday?'<span class="badge">오늘</span>':''}</div>
-    <div class="day">${d.getDate()}</div><div class="dow ${dow===0?'sun':dow===6?'sat':''}">${DOW[dow]}요일</div>
-    <div class="nav"><button id="prev">‹ 어제</button>${isToday?'':'<button id="gotoday">오늘로</button>'}<button id="next">내일 ›</button></div></div>
-  <button class="tile" data-cat="punch"><span class="ic">⏰</span><span class="tx"><b>출퇴근</b><small>${isToday?(working?'나: 근무 중 · ':'나: 미출근 · '):''}근무 중 ${working_n}명 / 예정 ${people.length}명</small></span><span class="ar">›</span></button>
-  <button class="tile" data-cat="duty"><span class="ic">📋</span><span class="tx"><b>근무 체크</b><small>오전 ${dDone('am')}/${DUTIES.am.length} · 오후 ${dDone('pm')}/${DUTIES.pm.length}</small></span><span class="ar">›</span></button>
-  <button class="tile" data-cat="close"><span class="ic">🌙</span><span class="tx"><b>마감</b><small>${clDone}/${clList.length} 완료${clDone<clList.length&&!(taskDone.cl_gas&&taskDone.cl_door)?' · <em>가스·문 확인 아직</em>':''}</small></span><span class="ar">›</span></button>
-  <button class="tile" data-cat="ho"><span class="ic">📝</span><span class="tx"><b>인수인계</b><small>${hos.length}건${unseen?` · <em>내가 확인 안 한 글 ${unseen}건</em>`:''}</small></span><span class="ar">›</span></button>
-  <button class="tile" data-cat="clean"><span class="ic">🧹</span><span class="tx"><b>청소</b><small>${doneCnt}/${TASKS.length} 완료${taskDone.door?'':' · <em>현관 창문 아직</em>'}</small></span><span class="ar">›</span></button>`;
+  // ── 두 번째 화면 (시안 C-3) ──
+  const pm=punchMsg&&punchMsg.until>Date.now()?punchMsg:null;
+  const mine=shiftsOf(myAtt);
+  let state=`<div class="ph-line">&nbsp;</div>`, btn=`<button class="ph-btn" id="pin_">출근</button>`;
+  if(working){state=`<div class="ph-line">출근 <b>${hm(lastMine.at)}</b> · 근무 ${fmtMin(mine.min+Math.max(0,Math.round((Date.now()-new Date(lastMine.at))/60000)))}째</div>`;btn=`<button class="ph-btn out" id="pout">퇴근</button>`;}
+  else if(lastMine&&lastMine.type==='out'){state=`<div class="ph-line">퇴근 <b>${hm(lastMine.at)}</b> · 오늘 <b>${fmtMin(mine.min)}</b> 근무</div>`;}
+  const hero=isToday?`<div class="ph"><div class="ph-t">지금</div><div class="ph-clock" id="clk">${nowHM()}</div>${state}${btn}
+    <div class="msg ${pm?'show '+pm.cls:''}" id="pm">${pm?esc(pm.text):''}</div>
+    <div class="ph-sub">매장 반경 ${S.settings.radius}m 안에서만 눌려요${S.settings.demo?' · 시연 모드 켜짐':''}</div></div>`:'';
+  const left=list=>list.filter(t=>!taskDone[t.id]).length;
+  const badge=(n,done='완료')=>n?`<span class="cnt-b">${n}</span>`:`<span class="done-t">${done}</span>`;
+  const gasDoor=!(taskDone.cl_gas&&taskDone.cl_door);
+  const rowHtml=(c,name,right)=>`<button class="lrow" data-cat="${c}"><span>${name}</span><span class="lr">${right}<span class="ar">›</span></span></button>`;
+  const who=people.map(p=>{const st=p.cur?'on':p.out?'off':'wait';
+    const r=st==='on'?`${hm(p.in.at)} 출근`:st==='off'?`${hm(p.in?p.in.at:p.out.at)} ~ ${hm(p.out.at)} · ${fmtMin(p.min)}`:p.plan;
+    return `<div class="wrow ${st}"><span class="wn"><i class="wk">${st==='wait'?'':'✓'}</i>${esc(uname(p.id))}</span><span class="wt">${r}</span></div>`}).join('');
+  return `<div class="dnav"><button class="dc" id="prev" aria-label="어제">‹</button>
+    <button class="dm" id="gotoday"><div class="dd">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div class="ds">${isToday?'오늘':'오늘로 돌아가기'}</div></button>
+    <button class="dc" id="next" aria-label="내일">›</button></div>
+  ${hero}
+  <div class="lcard">
+    ${rowHtml('duty','근무 체크',badge(left(DUTIES.am)+left(DUTIES.pm)))}
+    ${rowHtml('close','마감',(gasDoor&&left(clList)?'<span class="hint-t">가스·문 확인 전</span>':'')+badge(left(clList)))}
+    ${rowHtml('ho','인수인계',hos.length?badge(unseen,'확인 완료'):'<span class="done-t">없음</span>')}
+    ${rowHtml('clean','청소',badge(left(TASKS)))}
+  </div>
+  <div class="wcard"><div class="wh">${isToday?'오늘':'이날'} 근무자</div>${who||'<div class="wrow wait"><span class="wn">이날 근무표가 없어요</span></div>'}</div>`;
 }
 const dayRef=()=>doc(db,'days',viewDate);
 function bindDay(){
   if(!detail){$('cover').onclick=()=>{detail=true;window.scrollTo(0,0);render()};return}
-  $('back').onclick=()=>{if(cat)cat=null;else{detail=false;viewDate=bizDate(new Date())}window.scrollTo(0,0);ensureMonth();render()};
+  const bk=$('back');if(bk)bk.onclick=()=>{if(cat)cat=null;else{detail=false;viewDate=bizDate(new Date())}window.scrollTo(0,0);ensureMonth();render()};
   document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;window.scrollTo(0,0);render()});
   if(!cat){$('prev').onclick=()=>{viewDate=addDays(viewDate,-1);ensureMonth();render()};$('next').onclick=()=>{viewDate=addDays(viewDate,1);ensureMonth();render()};
-    const gt=$('gotoday');if(gt)gt.onclick=()=>{viewDate=bizDate(new Date());ensureMonth();render()};}
-  const pi=$('pin_');if(pi){pi.onclick=()=>punch('in');$('pout').onclick=()=>punch('out')}
+    $('gotoday').onclick=()=>{const t=bizDate(new Date());if(viewDate===t){detail=false}else viewDate=t;window.scrollTo(0,0);ensureMonth();render()};}
+  const pi=$('pin_');if(pi)pi.onclick=()=>punch('in');
+  const po=$('pout');if(po)po.onclick=()=>punch('out');
   document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.task,cur=(S.tasks[viewDate]||{})[id];
     if(cur){ if(cur.uid!==myId&&!isAdmin()){toast(uname(cur.uid)+'님이 체크한 항목이에요');return}
@@ -523,10 +611,10 @@ function renderMonth(){
     const sc=S.schedule[k]||[],hc=S.handovers.filter(h=>h.date===k).length,tc=Object.keys(S.tasks[k]||{}).length;
     cells+=`<button class="c ${dw===0?'sun':dw===6?'sat':''} ${k===today?'today':''}" data-day="${k}"><div class="d">${d}</div>
       ${sc.slice(0,4).map(s=>`<div class="p">${esc(uname(s.u))}</div>`).join('')}${sc.length>4?`<div class="p">+${sc.length-4}</div>`:''}
-      <div class="mk">${hc?'📝':''}${tc?'🧹':''}</div></button>`}
+      <div class="mk">${hc?'<span class="mkh">글</span>':''}${tc?'<span class="mkt">✓</span>':''}</div></button>`}
   return `<div class="mhead"><button id="mp">‹</button><div class="m"><small>${y}</small>${m}월</div><button id="mn">›</button></div>
    <div class="card" style="padding:10px"><div class="cal">${DOW.map(x=>`<div class="h">${x}</div>`).join('')}${cells}</div></div>
-   <div class="t" style="font-size:12px;color:var(--sub);text-align:center">날짜를 누르면 그날 화면으로 · 📝 인수인계 · 🧹 청소 기록</div>`;
+   <div class="t" style="font-size:12px;color:var(--sub);text-align:center">날짜를 누르면 그날 화면으로 · 글 = 인수인계 있음 · ✓ = 체크 기록 있음</div>`;
 }
 function bindMonth(){
   const mv=n=>{const [y,m]=viewMonth.split('-').map(Number);const d=new Date(y,m-1+n,1);viewMonth=d.getFullYear()+'-'+pad(d.getMonth()+1);ensureMonth();render()};
@@ -741,7 +829,7 @@ function render(){
   const keep=$('hotext')?$('hotext').value:'';
   if(document.activeElement&&document.activeElement.tagName==='TEXTAREA')return;
   if($('modal').classList.contains('show')&&document.activeElement&&$('sheet').contains(document.activeElement)) return; // 수정창 입력 중엔 화면 유지
-  $('app').innerHTML=`<header><div class="brand">백채 근무일지<small>성지길점</small></div><button class="me" id="logout">${esc(me.name)}${isAdmin()?' 👑':''} · 나가기</button></header><div class="wrap">${body}</div>`;
+  $('app').innerHTML=`<header><div class="brand">백채 근무일지<small>성지길점</small></div><button class="me" id="logout">${esc(me.name)} · 나가기</button></header><div class="wrap">${body}</div>`;
   if($('hotext'))$('hotext').value=keep;
   $('logout').onclick=logout;
   if(tab==='day')bindDay();else if(tab==='month')bindMonth();else bindAdmin();
@@ -750,6 +838,7 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
   if(b.dataset.tab==='day'){detail=false;cat=null;viewDate=bizDate(new Date())}
   if(b.dataset.tab!=='admin')payView=false;tab=b.dataset.tab;if(tab==='month')viewMonth=viewDate.slice(0,7);window.scrollTo(0,0);ensureMonth();render()});
 let lastBiz=null;
+setInterval(()=>{const c=$('clk');if(c)c.textContent=nowHM()},15000);
 setInterval(()=>{if(!ready)return;const b=bizDate(new Date());if(b!==lastBiz){if(viewDate===lastBiz){viewDate=b;detail=false;cat=null;ensureMonth()}lastBiz=b;render()}},60000);
 
 </script>

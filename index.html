@@ -196,6 +196,22 @@ body.paper-on .app{padding-bottom:0}
 .hopop .bx{border-top:1px solid #e4ded5;border-bottom:1px solid #e4ded5;padding:14px 0;margin-bottom:16px;font-size:16px}.hopop .bx b{font-size:28px;display:block;margin-top:4px}
 .hopop .go{width:100%;background:#1f1b16;color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:800;font-family:inherit}
 .hph.hpnone{display:flex;justify-content:space-between;align-items:center;margin:0}.hpn{color:var(--sub);font-weight:500}.hpgo{font-size:13px;font-weight:600;border:1.5px solid var(--ink);border-radius:14px;padding:3px 12px;background:#fff;color:var(--ink);font-family:inherit}
+.cw{position:fixed;inset:0;z-index:60;background:#c62828;color:#fff;overflow:auto}
+.cw-in{max-width:480px;margin:0 auto;min-height:100%;box-sizing:border-box;padding:40px 22px 24px;display:flex;flex-direction:column}
+.cw-ic{width:52px;height:52px;border:3px solid #fff;border-radius:50%;font-size:32px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.cw h1{font-size:26px;line-height:1.3;font-weight:900;margin:0 0 8px}.cw p{font-size:16px;opacity:.92;margin:0 0 14px}
+.cw ul{background:rgba(0,0,0,.18);border-radius:14px;padding:12px 16px 12px 34px;margin:0;font-size:15px;line-height:1.7}
+.cw-hand{background:#fff;color:#1f1b16;border-radius:14px;padding:14px;margin:14px 0 auto}
+.cw-cb{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;background:none;border:none;padding:0;color:#1f1b16;font-family:inherit;text-align:left}
+.cw-cb i{width:24px;height:24px;flex:none;border:2px solid #1f1b16;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-style:normal}.cw-cb i.on{background:#1f1b16;color:#fff}
+.cw-sm{font-size:13px;color:#7a7268;margin:12px 0 8px}.cw-nm{display:flex;gap:8px;flex-wrap:wrap}.cw-nm button{flex:1;min-width:30%;border:1.5px solid #1f1b16;border-radius:12px;padding:12px 0;font-weight:800;font-size:16px;background:#fff;color:#1f1b16;font-family:inherit}.cw-nm button.on{background:#1f1b16;color:#fff}
+.cw-go{width:100%;background:#1f1b16;color:#fff;border:none;border-radius:12px;padding:14px;font-weight:900;font-size:16px;margin-top:12px;font-family:inherit}.cw-go.off{background:#d6cec3}
+.cw-h{font-size:15px;font-weight:800;margin-bottom:6px}.cw-t{font-size:14px}
+.cw-b1{width:100%;background:#fff;color:#c62828;border:none;border-radius:14px;padding:17px;font-size:18px;font-weight:900;margin-top:18px;font-family:inherit}
+.ha-ls{background:#f4f1ec;border-radius:10px;padding:9px 12px;font-size:14px;margin-bottom:6px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ha-ls small{display:block;color:#7a7268;font-size:12px}
+.hopop .go2{width:100%;border:2px solid #1f1b16;background:#fff;color:#1f1b16;border-radius:14px;padding:14px;font-size:16px;font-weight:700;margin-top:10px;font-family:inherit}
+.hopop .go3{width:100%;border:none;background:none;color:#7a7268;font-size:14px;text-decoration:underline;margin-top:14px;font-family:inherit}
+.hfban{display:flex;width:100%;justify-content:space-between;align-items:center;background:#c62828;color:#fff;border:none;border-radius:16px;padding:14px 16px;margin-bottom:12px;font-size:15px;font-weight:700;text-align:left;font-family:inherit}.hfban small{display:block;font-weight:400;font-size:12px;opacity:.85;margin-top:2px}.hfban .ar{font-size:20px}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -486,6 +502,45 @@ async function punch(type){
   }catch(e){showPunch('err','저장 실패: '+(e.code||e.message))}
 }
 
+
+/* ===== 퇴근 전 확인: ① 8시 이후 마감 체크(빨간 화면, 넘기기) ② 인수인계 작성 여부 ===== */
+function closeLeft(day){const done=S.tasks[day]||{},sun=parse(day).getDay()===0;return DUTIES.cl.filter(t=>(!t.sunday||sun)&&!done[t.id]);}
+function workingNow(day){const ids=[...new Set(S.attendance.filter(a=>a.date===day).map(a=>a.uid))];
+  return ids.filter(id=>{const a=S.attendance.filter(x=>x.date===day&&x.uid===id);return a.length&&a[a.length-1].type==='in'});}
+function goCat(c,day){document.querySelectorAll('.ovl').forEach(o=>o.remove());tab='day';detail=true;cat=c;viewDate=day;window.scrollTo(0,0);ensureMonth();render();}
+function checkOut(){const day=bizDate(new Date()),h=new Date().getHours();
+  const late=h>=20||h<S.settings.cutoff;
+  const handed=S.handovers.some(x=>x.date===day&&x.by===myId&&x.handoff);
+  if(late&&!handed&&closeLeft(day).length) return closeWarn(day);
+  hoAsk(day);}
+function closeWarn(day){const left=closeLeft(day),others=workingNow(day).filter(id=>id!==myId);
+  let on=false,pick=null;
+  const o=document.createElement('div');o.className='ovl cw';
+  const draw=()=>{o.innerHTML=`<div class="cw-in"><div class="cw-ic">!</div><h1>마감 중 체크 안 한 게<br>있습니다.</h1>
+   <p>다시 한번 확인하세요. 남은 마감 ${left.length}개</p><ul>${left.map(t=>`<li>${esc(t.name)}</li>`).join('')}</ul>
+   <div class="cw-hand">${others.length?`<button class="cw-cb" id="cwcb"><i class="${on?'on':''}">${on?'✓':''}</i>남은 마감은 다른 근무자가 이어서 해요</button>
+     ${on?`<div class="cw-sm">누가 이어서 하나요?</div><div class="cw-nm">${others.map(id=>`<button data-pk="${id}" class="${pick===id?'on':''}">${esc(uname(id))}</button>`).join('')}</div>`:''}
+     <button class="cw-go ${on&&pick?'':'off'}" id="cwgo">퇴근하기</button>`
+    :`<div class="cw-h">지금 근무 중인 사람이 나뿐이에요</div><div class="cw-t">마감을 모두 체크해야 퇴근 버튼이 눌려요.</div><button class="cw-go off">퇴근 (마감 ${left.length}개 남음)</button>`}</div>
+   <button class="cw-b1" id="cwcl">마감 체크하러 가기</button></div>`;
+   o.querySelector('#cwcl').onclick=()=>goCat('close',day);
+   const cb=o.querySelector('#cwcb');if(cb)cb.onclick=()=>{on=!on;if(!on)pick=null;draw()};
+   o.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{pick=b.dataset.pk;draw()});
+   const go=o.querySelector('#cwgo');if(go)go.onclick=async()=>{if(!(on&&pick))return;
+     try{await addDoc(collection(db,'handovers'),{date:day,text:`마감 ${left.length}개를 ${uname(pick)}에게 넘겼어요: ${left.map(t=>t.name).join(', ')}`,by:myId,at:serverTimestamp(),edits:[],re:{},handoff:{to:pick,n:left.length}});}catch(e){fail(e);return}
+     o.remove();hoAsk(day);};};
+  draw();document.body.appendChild(o);}
+function hoAsk(day){const y=addDays(day,-1);
+  const mine=S.handovers.filter(h=>h.by===myId&&!h.handoff&&(h.date===day||h.date===y)&&(Date.now()-new Date(h.at))<20*3600e3);
+  const o=document.createElement('div');o.className='ovl hopop';
+  o.innerHTML=`<div class="hopop-b"><div class="t1">퇴근하기 전에</div><div class="t2">인수인계를 작성하셨나요?</div>
+   <div class="bx">오늘 내가 쓴 인수인계<b>${mine.length}건</b></div>
+   ${mine.map(h=>`<div class="ha-ls">${h.item?esc(itemName(h.item))+' · ':''}${esc(h.text)}<small>${ampm(h.at)}</small></div>`).join('')}
+   ${mine.length?`<button class="go" id="haok">네, 작성했어요 · 퇴근</button><button class="go2" id="hawr">하나 더 쓰러 가기</button>`
+     :`<button class="go" id="hawr">인수인계 쓰러 가기</button><button class="go3" id="haok">남길 게 없어요 · 퇴근</button>`}</div>`;
+  document.body.appendChild(o);
+  o.querySelector('#hawr').onclick=()=>goCat('ho',day);
+  o.querySelector('#haok').onclick=()=>{o.remove();punch('out')};}
 /* ===== 오늘(일) 화면 ===== */
 function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   return `<div class="ho">${h.item?`<div class="tag">${esc(itemName(h.item))}</div>`:''}<div class="meta"><span><b>${esc(uname(h.by))}</b> · ${hm(h.at)}</span>${h.edits.length?`<span>수정됨 · ${esc(uname(h.edits[h.edits.length-1].by))}</span>`:''}</div>
@@ -604,6 +659,8 @@ function renderDay(){
     <button class="dm" id="gotoday"><div class="dd">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div class="ds">${isToday?'오늘':'오늘로 돌아가기'}</div></button>
     <button class="dc" id="next" aria-label="내일">›</button></div>
   ${hero}
+  ${(()=>{if(!isToday||!working)return '';const hf=S.handovers.filter(h=>h.date===viewDate&&h.handoff&&h.handoff.to===myId);const n=closeLeft(viewDate).length;
+    if(!hf.length||!n)return '';const f=hf[hf.length-1];return `<button class="hfban" data-cat="close"><span>${esc(uname(f.by))}이 마감을 넘겼어요 · 남은 ${n}개<small>다 체크해야 퇴근할 수 있어요 · 눌러서 마감 보기</small></span><span class="ar">›</span></button>`})()}
   <div class="lcard">
     ${rowHtml('duty','근무 체크',badge(left(DUTIES.am)+left(DUTIES.pm)))}
     ${rowHtml('close','마감',(gasDoor&&left(clList)?'<span class="hint-t">가스·문 확인 전</span>':'')+badge(left(clList)))}
@@ -620,7 +677,7 @@ function bindDay(){
   if(!cat){$('prev').onclick=()=>{viewDate=addDays(viewDate,-1);ensureMonth();render()};$('next').onclick=()=>{viewDate=addDays(viewDate,1);ensureMonth();render()};
     $('gotoday').onclick=()=>{const t=bizDate(new Date());if(viewDate===t){detail=false}else viewDate=t;window.scrollTo(0,0);ensureMonth();render()};}
   const pi=$('pin_');if(pi)pi.onclick=()=>punch('in');
-  const po=$('pout');if(po)po.onclick=()=>punch('out');
+  const po=$('pout');if(po)po.onclick=()=>checkOut();
   document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.task,cur=(S.tasks[viewDate]||{})[id];
     if(cur){ if(cur.uid!==myId&&!isAdmin()){toast(uname(cur.uid)+'님이 체크한 항목이에요');return}

@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="백채 근무일지">
 <title>백채 근무일지</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f3ee;--card:#fff;--ink:#1f1b16;--sub:#7a7268;--line:#e7e1d8;--red:#c0392b;--red2:#fbeae7;--blue:#2c5d9e;--green:#2e7d4f;--green2:#e6f3ea;--amber:#b7791f;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -160,6 +160,30 @@ nav.tabs button.on{color:var(--ink);font-weight:700}nav.tabs button.on:before{ba
 .sech{font-size:24px}
 .cal .c .mk span{display:inline-block;font-size:9px;font-weight:700;border:1px solid var(--ink);border-radius:4px;padding:0 3px;margin-right:2px;color:var(--ink)}
 .cal .c.sun .d,.cal .c.sat .d{color:var(--ink)}.cal .h:first-child,.cal .h:last-child{color:var(--sub)}
+
+/* 인수인계 종이 */
+body.paper-on{background:#fff}body.paper-on .app{padding-bottom:0}
+.paper{--fs:25px;font-family:'Nanum Pen Script',cursive;min-height:100vh;min-height:100dvh;background:#fff;position:relative;padding:14px 18px 40px 46px;
+ background-image:repeating-linear-gradient(transparent 0 33px,#e4ded5 33px 34px);background-position:0 92px;background-repeat:no-repeat;background-size:100% calc(100% - 92px)}
+.paper:before{content:'';position:absolute;left:34px;top:0;bottom:0;border-left:1px solid #cfc7bb}
+.ptop{display:flex;justify-content:space-between;align-items:center;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#7a7268;height:22px;margin-left:-34px}
+.ptop button{border:1.5px solid #1f1b16;border-radius:14px;padding:1px 10px;color:#1f1b16;font-weight:600;background:#fff;position:relative;z-index:1;font-size:13px;font-family:inherit}
+.phead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1f1b16;padding-bottom:6px;height:56px;margin-bottom:2px}
+.phead h1{font-size:34px;font-weight:400;line-height:1;margin:0;padding:0;font-family:inherit}.phead div{font-size:20px;white-space:nowrap;margin:0}
+.ptx{font-size:var(--fs);line-height:34px;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.ptag{font-size:calc(var(--fs) - 2px);line-height:34px;text-decoration:underline}
+.psg{text-align:right;font-size:calc(var(--fs) + 1px);line-height:34px}
+.psg small{font-size:calc(var(--fs) - 4px);color:#7a7268;margin-left:6px}
+.pbar{font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;gap:8px;font-size:12px;color:#7a7268;height:34px}
+.pbar .pc{border:1px solid #1f1b16;border-radius:14px;padding:2px 10px;color:#1f1b16;background:#fff;font-size:12px;font-family:inherit;white-space:nowrap}
+.pbar .pc.on{background:#1f1b16;color:#fff}
+.pbar .pwho{background:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbar .ped{margin-left:auto;border:none;background:#fff;color:#7a7268;font-size:12px;font-family:inherit;padding:0 4px}
+.pw textarea{width:100%;border:none;outline:none;resize:none;background:transparent;font-family:'Nanum Pen Script',cursive;font-size:var(--fs);line-height:34px;padding:0;margin:0;min-height:102px;color:#1f1b16;border-radius:0}
+.pw textarea::placeholder{color:#b3aa9e}
+.pgo{font-family:'Noto Sans KR',sans-serif;display:flex;justify-content:space-between;align-items:center;height:68px}
+.pgo span{font-size:12px;color:#7a7268;background:#fff;padding:2px 0}
+.pgo button{border:2px solid #1f1b16;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:700;background:#fff;color:#1f1b16;font-family:inherit}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -194,7 +218,7 @@ const db = getFirestore(fb);
 /* ===== 고정값 ===== */
 const MAX_STAFF = 10, PHOTO_DAYS = 7;
 const DOW = ['일','월','화','수','목','금','토'];
-const REACT = [['ok','✅'],['good','👍'],['thx','🙏']];
+const REACT = [['ok','✓ 확인']];
 /* 청소 체크리스트 — 2026-11-10 사장님 확정 문구
    elec: 전자기기, glass: 창문 → 3일 이상이어도 오븐클리너 안내 없이 경고만 */
 const SPRAY='파채 기계 옆 분무기를 뿌려서';
@@ -450,6 +474,21 @@ function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   <div class="acts">${REACT.map(([k,e])=>{const a=h.re[k]||[];return `<button class="re ${a.includes(myId)?'mine':''}" data-h="${h.id}" data-k="${k}">${e} ${a.length||''}</button>`}).join('')}
   <button class="edit" data-edit="${h.id}">수정</button></div>
   ${seen.length?`<div class="seen">${seen.map(([k,e])=>e+' '+h.re[k].map(uname).join(', ')).join(' · ')}</div>`:'<div class="seen">아직 아무도 확인 안 함</div>'}</div>`;}
+/* 인수인계 종이 한 장 (A4 손글씨) */
+const ampm=iso=>{const d=new Date(iso),h=d.getHours();return (h<5?'새벽':h<12?'오전':h<18?'오후':'밤')+' '+((h%12)||12)+':'+pad(d.getMinutes())};
+function paperEntry(h){const ok=h.re.ok||[],mine=ok.includes(myId);
+  return `<div class="pe">${h.item?`<div class="ptag">${esc(itemName(h.item))}</div>`:''}
+  <div class="ptx">${esc(h.text)}</div>
+  <div class="psg">— ${esc(uname(h.by))} 씀<small>${ampm(h.at)}${h.edits.length?' · '+esc(uname(h.edits[h.edits.length-1].by))+' 고침':''}</small></div>
+  <div class="pbar"><button class="pc ${mine?'on':''}" data-h="${h.id}" data-k="ok">✓ 확인${ok.length?' '+ok.length:''}</button>
+  <span class="pwho">${ok.length?ok.map(uname).map(esc).join(' · '):'아직 아무도 확인 안 함'}</span>
+  <button class="ped" data-edit="${h.id}">고치기</button></div></div>`;}
+function renderPaper(d,dow,hos){
+  return `<div class="paper"><div class="ptop"><button id="back">‹ 목록</button><span>백채 근무일지 · 성지길점</span></div>
+  <div class="phead"><h1>인수인계</h1><div>${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()} (${DOW[dow]})</div></div>
+  ${hos.map(paperEntry).join('')}
+  <div class="pw"><textarea id="hotext" rows="3" placeholder="여기에 이어서 적기…"></textarea>
+  <div class="pgo"><span>적으면 내 이름이 자동으로 붙어요</span><button id="hoadd">남기기</button></div></div></div>`;}
 /* 체크 항목 한 줄 (청소·근무 공통) */
 function itemRow(t,r,cmts,o={}){const open=openCmt.has(t.id);
   return `<div class="task ${r?'done':''}" id="t_${t.id}"><div class="top">
@@ -517,6 +556,7 @@ function renderDay(){
   const working_n=people.filter(p=>p.cur).length;
   const unseen=hos.filter(h=>!REACT.some(([k])=>(h.re[k]||[]).includes(myId))).length;
   if(cat){
+    if(cat==='ho') return renderPaper(d,dow,hos);
     const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소'};
     return `<button class="back" id="back">‹ ${d.getMonth()+1}월 ${d.getDate()}일 목록으로</button>
     <h2 class="sech">${titles[cat]}</h2><div class="t" style="color:var(--sub);font-size:13px">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div style="height:10px"></div>
@@ -820,7 +860,9 @@ function shrink(file){return new Promise((res,rej)=>{const fr=new FileReader();f
 /* ===== 렌더 ===== */
 function render(){
   if(!me||!ready)return;
-  const tabs=$('tabs');tabs.style.display='flex';
+  const paper=tab==='day'&&detail&&cat==='ho';
+  document.body.classList.toggle('paper-on',paper);
+  const tabs=$('tabs');tabs.style.display=paper?'none':'flex';
   $('tabAdmin').style.display=isAdmin()?'block':'none';
   tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
   if(tab==='month'&&!viewMonth)viewMonth=viewDate.slice(0,7);
@@ -829,9 +871,9 @@ function render(){
   const keep=$('hotext')?$('hotext').value:'';
   if(document.activeElement&&document.activeElement.tagName==='TEXTAREA')return;
   if($('modal').classList.contains('show')&&document.activeElement&&$('sheet').contains(document.activeElement)) return; // 수정창 입력 중엔 화면 유지
-  $('app').innerHTML=`<header><div class="brand">백채 근무일지<small>성지길점</small></div><button class="me" id="logout">${esc(me.name)} · 나가기</button></header><div class="wrap">${body}</div>`;
+  $('app').innerHTML=paper?body:`<header><div class="brand">백채 근무일지<small>성지길점</small></div><button class="me" id="logout">${esc(me.name)} · 나가기</button></header><div class="wrap">${body}</div>`;
   if($('hotext'))$('hotext').value=keep;
-  $('logout').onclick=logout;
+  if($('logout'))$('logout').onclick=logout;
   if(tab==='day')bindDay();else if(tab==='month')bindMonth();else bindAdmin();
 }
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{

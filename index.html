@@ -221,6 +221,7 @@ body.paper-on .app{padding-bottom:0}
 .rpr{display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px;align-items:center;margin-bottom:8px;font-size:14px}
 .rppre{white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.55;margin:0;background:#f4f1ec;border-radius:10px;padding:10px 12px}
 .rpgo{margin-top:4px;padding:17px;font-size:17px}
+.rpl{display:grid;grid-template-columns:minmax(0,1fr) 64px 118px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.rpl:last-of-type{border-bottom:none}.rpl span{font-weight:800;font-size:15px}.rpl .rpin{width:100%}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -560,7 +561,6 @@ const rw=n=>n.toLocaleString('ko-KR');
 function rpState(day){if(!RP[day]){RP[day]={nums:{},img:{},loaded:false};rpLoad(day)}return RP[day]}
 async function rpLoad(day){const st=RP[day];
   try{const d=await getDoc(doc(db,'photos',day+'_rpt'));if(d.exists())st.nums=Object.assign({},d.data().nums||{},st.nums);
-    await Promise.all([...RP_APPS.map(a=>a[0]),'rc'].map(async k=>{const p=await getDoc(doc(db,'photos',day+'_rp_'+k));if(p.exists())st.img[k]=p.data().data}));
   }catch(e){}
   st.loaded=true;if(cat==='rpt'&&viewDate===day)render();}
 let rpTimer=null;
@@ -568,11 +568,18 @@ function rpSave(day){clearTimeout(rpTimer);rpTimer=setTimeout(()=>{setDoc(doc(db
 function rpText(day){const n=RP[day].nums,v=k=>rpNum(n[k]),d=parse(day);
   const app=k=>v(k+'_n')||v(k+'_w')?`${v(k+'_n')}건  ${rw(v(k+'_w'))}원`:'x';
   const dn=RP_APPS.reduce((a,[k])=>a+v(k+'_n'),0),dw=RP_APPS.reduce((a,[k])=>a+v(k+'_w'),0);
-  const opt=k=>v(k)?`${rw(v(k))}원`:'';
+  const plus=[['계좌이체','acct'],['서울페이','seoul']].filter(([,k])=>v(k));
+  let store=`매장 건수 ${v('st_n')}건 ${rw(v('st_w'))}원`;
+  if(plus.length)store+=`\n(${plus.map(([nm,k])=>`${nm} ${rw(v(k))}원`).join(', ')} 포함 ${rw(v('st_w')+plus.reduce((a,[,k])=>a+v(k),0))}원)`;
+  const extra=[];
+  if(v('zero'))extra.push(`제로페이 ${rw(v('zero'))}원`);
+  if(v('food_n')||v('food_w'))extra.push(`식권 ${v('food_n')}건 ${rw(v('food_w'))}원`);
+  if(v('jp'))extra.push(`장부 선결제 ${rw(v('jp'))}원`);
+  if(v('ju'))extra.push(`장부 선결제금 사용 ${rw(v('ju'))}원`);
+  if(extra.length)store+='\n'+extra.join('\n');
   return `<${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[d.getDay()]}요일 마감>
 
-매장 건수 ${v('st_n')}건 ${rw(v('st_w'))}원
-(계좌이체 ${rw(v('acct'))}원,  서울페이 ${rw(v('seoul'))}원 총 ${rw(v('st_w')+v('acct')+v('seoul'))}원)
+${store}
 
 배달  ${dn}건  ${rw(dw)}원
 
@@ -585,38 +592,25 @@ ${app('yo')}
 - 땡겨요
 ${app('dd')}
 - 현금매출
-${v('cash_n')||v('cash_w')?`${v('cash_n')}건  ${rw(v('cash_w'))}원`:''}
-- 식권
-${v('food_n')||v('food_w')?`${v('food_n')}건  ${rw(v('food_w'))}원`:'x'}
-- 제로페이
-${opt('zero')}
-- 계좌이체
-${opt('acct2')}
-- 장부 선결제${v('jp')?' '+rw(v('jp'))+'원':''}
-- 장부 선결제금 사용${v('ju')?' '+rw(v('ju'))+'원':''}`;}
-function renderReport(day){const st=rpState(day),n=st.nums;
+${v('cash_n')||v('cash_w')?`${v('cash_n')}건  ${rw(v('cash_w'))}원`:''}`;}
+function renderReport(day){const st=rpState(day),n=st.nums,v=k=>rpNum(n[k]);
   const inp=(k,ph,w)=>`<input class="rpin${w?' w':''}" data-rk="${k}" inputmode="numeric" placeholder="${ph}" value="${esc(n[k]||'')}">`;
-  const slot=k=>`<label class="rpph${st.img[k]?' ok':''}">${st.img[k]?`<img src="${st.img[k]}" alt="">`:'+<br>사진 올리기'}<input type="file" accept="image/*" data-rcam="${k}"></label>`;
-  const row=(k,name,ph,inner)=>`<div class="rpac">${slot(k)}<div><div class="rpn">${name}</div>${inner}${ph?`<div class="rpt">${ph}</div>`:''}</div></div>`;
-  const pair=(a,b)=>`<div class="rpio">${inp(a,'건')}${inp(b,'원',1)}</div>`;
-  const one=(k,name)=>`<div class="rpr"><span>${name}</span>${inp(k,'원',1)}</div>`;
+  const line=(name,a,b)=>`<div class="rpl"><span>${name}</span>${inp(a,'건')}${inp(b,'원',1)}</div>`;
+  const one=(k,name)=>`<div class="rpl"><span>${name}</span><i></i>${inp(k,'원',1)}</div>`;
+  const dn=RP_APPS.reduce((a,[k])=>a+v(k+'_n'),0),dw=RP_APPS.reduce((a,[k])=>a+v(k+'_w'),0);
   return `<div class="rpbadge">시험 중 · 써 보고 아니면 바로 뺄 수 있어요</div>
-  <div class="card"><h3>배달 <span class="cnt">0건이면 비워 두세요 (x로 나가요)</span></h3>
-   ${RP_APPS.map(([k,name])=>row(k,name,'',pair(k+'_n',k+'_w'))).join('')}</div>
-  <div class="card"><h3>매장 <span class="cnt">마감 영수증</span></h3>
-   ${row('rc','매출총액','현금 소계도 아래에 넣어요',pair('st_n','st_w'))}
-   <div class="rpr"><span>현금 소계</span><div class="rpio">${inp('cash_n','건')}${inp('cash_w','원',1)}</div></div></div>
-  <div class="card"><h3>기타 <span class="cnt">없으면 비워 두세요</span></h3>
-   ${one('acct','계좌이체 (매장)')}${one('seoul','서울페이')}
-   <div class="rpr"><span>식권</span><div class="rpio">${inp('food_n','건')}${inp('food_w','원',1)}</div></div>
-   ${one('zero','제로페이')}${one('acct2','계좌이체')}${one('jp','장부 선결제')}${one('ju','장부 선결제금 사용')}</div>
+  <div class="card"><h3>배달 <span class="cnt" id="rpsum">합계 ${dn}건 ${rw(dw)}원</span></h3>
+   ${RP_APPS.map(([k,name])=>line(name,k+'_n',k+'_w')).join('')}<div class="rpt">0건이면 비워 두세요 (카톡 글에 x로 나가요)</div></div>
+  <div class="card"><h3>매장 <span class="cnt">마감 영수증 보고 넣기</span></h3>
+   ${line('매출총액','st_n','st_w')}${line('현금 소계','cash_n','cash_w')}</div>
+  <div class="card"><h3>기타 <span class="cnt">없으면 비워 두세요 (글에서 빠져요)</span></h3>
+   ${one('acct','계좌이체')}${one('seoul','서울페이')}${line('식권','food_n','food_w')}${one('zero','제로페이')}${one('jp','장부 선결제')}${one('ju','선결제금 사용')}</div>
   <div class="card"><h3>카톡으로 나갈 글</h3><pre class="rppre" id="rppre">${esc(rpText(day))}</pre></div>
   <button class="btn full rpgo" id="rpsend">카톡으로 보내기</button>
-  <div class="t" style="font-size:12px;color:var(--sub);text-align:center;margin-top:8px">누르면 공유 화면이 떠요 → 카카오톡 → 대화방 고르기<br>사진은 사이트에 ${PHOTO_DAYS}일 보관돼요</div>`;}
+  <div class="t" style="font-size:12px;color:var(--sub);text-align:center;margin-top:8px">누르면 공유 화면이 떠요 → 카카오톡 → 대화방 고르기</div>`;}
 function bindReport(day){const st=rpState(day);
-  document.querySelectorAll('[data-rk]').forEach(i=>i.oninput=()=>{st.nums[i.dataset.rk]=i.value;$('rppre').textContent=rpText(day);rpSave(day)});
-  document.querySelectorAll('input[data-rcam]').forEach(inp=>inp.onchange=async()=>{const f=inp.files[0];if(!f)return;const k=inp.dataset.rcam;toast('사진 올리는 중…');
-    try{const data=await shrink(f,1600);await setDoc(doc(db,'photos',day+'_rp_'+k),{data,date:day,task:'rp_'+k,uid:myId,at:serverTimestamp()});st.img[k]=data;render();toast('사진을 올렸어요')}catch(e){fail(e)}});
+  document.querySelectorAll('[data-rk]').forEach(i=>i.oninput=()=>{st.nums[i.dataset.rk]=i.value;$('rppre').textContent=rpText(day);
+    const v=k=>rpNum(st.nums[k]),sm=$('rpsum');if(sm)sm.textContent=`합계 ${RP_APPS.reduce((a,[k])=>a+v(k+'_n'),0)}건 ${rw(RP_APPS.reduce((a,[k])=>a+v(k+'_w'),0))}원`;rpSave(day)});
   const b=$('rpsend');if(b)b.onclick=async()=>{const text=rpText(day);
     if(navigator.share){try{await navigator.share({text});return}catch(e){if(e&&e.name==='AbortError')return}}
     try{await navigator.clipboard.writeText(text);toast('복사됐어요. 카톡 대화방에 붙여넣으세요')}catch(e){toast('보내기가 안 돼요. 위 글을 꾹 눌러 복사해 주세요')}};}

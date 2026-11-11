@@ -185,6 +185,16 @@ body.paper-on .app{padding-bottom:0}
 .pgo span{font-size:12px;color:#7a7268;background:#fff;padding:2px 0}
 .pgo button{border:2px solid #1f1b16;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:700;background:#fff;color:#1f1b16;font-family:inherit}
 .paper:before{display:none}.paper{padding-left:14px;padding-right:14px;background-image:none;background-color:#e9e7e4}body.paper-on{background:#e9e7e4}.ptop{margin-left:0}.ptop button{background:#e9e7e4}.pe{background:#fff;border:1.5px solid #d2cec8;border-radius:12px;padding:10px 12px;margin-top:10px}.ptx,.ptag,.psg{line-height:1.6}.pbar{height:auto;margin-top:6px}.pbar .pwho,.pbar .ped{background:none}.pw textarea{background:#fff;border:1.5px solid #d2cec8;border-radius:12px;padding:10px;line-height:1.6;margin-top:12px}.pgo span{background:none}
+.hp{text-align:left;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.hph{font-size:13px;font-weight:800;margin-bottom:8px}
+.hpi{background:#f4f1ec;border-radius:10px;padding:9px 11px;margin-bottom:6px}
+.hpt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:left;border:none;background:none;padding:0;font-size:14px;color:var(--ink);font-family:inherit;width:100%;white-space:pre-wrap}
+.hpm{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-top:5px}
+.hpm .pc{margin-left:auto;border:1px solid #1f1b16;border-radius:14px;padding:2px 10px;background:#fff;color:#1f1b16;font-size:12px;font-family:inherit}.hpm .pc.on{background:#1f1b16;color:#fff}
+.hopop{position:fixed;inset:0;background:rgba(31,27,22,.6);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.hopop-b{background:#fff;border:2px solid #1f1b16;border-radius:20px;padding:26px 22px 22px;text-align:center;width:100%;max-width:420px}
+.hopop .t1{font-size:14px;color:#7a7268}.hopop .t2{font-size:26px;font-weight:900;margin:6px 0 14px}
+.hopop .bx{border-top:1px solid #e4ded5;border-bottom:1px solid #e4ded5;padding:14px 0;margin-bottom:16px;font-size:16px}.hopop .bx b{font-size:28px;display:block;margin-top:4px}
+.hopop .go{width:100%;background:#1f1b16;color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:800;font-family:inherit}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -455,6 +465,12 @@ function getPos(){return new Promise((res,rej)=>{if(!navigator.geolocation)retur
   navigator.geolocation.getCurrentPosition(p=>res(p.coords),e=>rej(e),{enableHighAccuracy:true,timeout:15000,maximumAge:0})})}
 let punchMsg=null; // {cls,text} 화면이 새로 그려져도 유지
 function showPunch(cls,text){punchMsg={cls,text,until:Date.now()+15000};const m=$('pm');if(m){m.className='msg show '+cls;m.textContent=text}}
+/* 출근 직후 인수인계 팝업 (닫기 없음, 보러 가기만) */
+function hoPopup(n,day){const o=document.createElement('div');o.className='hopop';
+  o.innerHTML=`<div class="hopop-b"><div class="t1">${hm(new Date().toISOString())} 출근 완료</div><div class="t2">인수인계부터 볼까요?</div>
+  <div class="bx">아직 확인 안 한 인수인계<b>${n}건</b></div><button class="go" id="hogo">인수인계 보러 가기</button></div>`;
+  document.body.appendChild(o);
+  o.querySelector('#hogo').onclick=()=>{o.remove();tab='day';detail=true;cat='ho';viewDate=day;window.scrollTo(0,0);ensureMonth();render()};}
 async function punch(type){
   showPunch('','위치 확인 중…');
   const today=bizDate(new Date());let dist=null;
@@ -465,6 +481,7 @@ async function punch(type){
   }
   try{await addDoc(collection(db,'attendance'),{uid:myId,date:today,type,at:serverTimestamp(),dist,edits:[]});
     showPunch('ok',`${hm(new Date().toISOString())} ${type==='in'?'출근':'퇴근'} 완료`+(dist==null?' (시연 모드)':` · 매장까지 ${dist}m`));
+    if(type==='in'){const n=unseenOf(hosAround(today)).length;if(n)hoPopup(n,today)}
   }catch(e){showPunch('err','저장 실패: '+(e.code||e.message))}
 }
 
@@ -475,12 +492,15 @@ function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   <div class="acts">${REACT.map(([k,e])=>{const a=h.re[k]||[];return `<button class="re ${a.includes(myId)?'mine':''}" data-h="${h.id}" data-k="${k}">${e} ${a.length||''}</button>`}).join('')}
   <button class="edit" data-edit="${h.id}">수정</button></div>
   ${seen.length?`<div class="seen">${seen.map(([k,e])=>e+' '+h.re[k].map(uname).join(', ')).join(' · ')}</div>`:'<div class="seen">아직 아무도 확인 안 함</div>'}</div>`;}
-/* 인수인계 종이 한 장 (A4 손글씨) */
+/* 어제+오늘 인수인계 (마감 인수인계는 다음 날 아침에 보니까 어제 것도 같이) */
+const hosAround=date=>{const y=addDays(date,-1);return S.handovers.filter(h=>h.date===date||h.date===y)};
+const unseenOf=list=>list.filter(h=>!(h.re.ok||[]).includes(myId));
+/* 인수인계 종이 한 장 */
 const ampm=iso=>{const d=new Date(iso),h=d.getHours();return (h<5?'새벽':h<12?'오전':h<18?'오후':'밤')+' '+((h%12)||12)+':'+pad(d.getMinutes())};
 function paperEntry(h){const ok=h.re.ok||[],mine=ok.includes(myId);
   return `<div class="pe">${h.item?`<div class="ptag">${esc(itemName(h.item))}</div>`:''}
   <div class="ptx">${esc(h.text)}</div>
-  <div class="psg">— ${esc(uname(h.by))} 씀<small>${ampm(h.at)}${h.edits.length?' · '+esc(uname(h.edits[h.edits.length-1].by))+' 고침':''}</small></div>
+  <div class="psg">— ${esc(uname(h.by))} 씀<small>${h.date!==viewDate?'어제 ':''}${ampm(h.at)}${h.edits.length?' · '+esc(uname(h.edits[h.edits.length-1].by))+' 고침':''}</small></div>
   <div class="pbar"><button class="pc ${mine?'on':''}" data-h="${h.id}" data-k="ok">✓ 확인${ok.length?' '+ok.length:''}</button>
   <span class="pwho">${ok.length?ok.map(uname).map(esc).join(' · '):'아직 아무도 확인 안 함'}</span>
   <button class="ped" data-edit="${h.id}">고치기</button></div></div>`;}
@@ -555,9 +575,9 @@ function renderDay(){
     <div class="t" style="font-size:12px;margin-bottom:6px">하나씩 체크하면서 할 것 · 사진 올리면 자동 체크 · 댓글은 다음 아침 근무자에게 인수인계로 전달돼요${isSun?'':'<br>쓰레기 마감은 일요일 항목이라 오늘 완료 개수에서 빠져요'}</div>
     ${DUTIES.cl.map(t=>itemRow(t,taskDone[t.id],hos.filter(h=>h.item===t.id))).join('')}</div>`;
   const working_n=people.filter(p=>p.cur).length;
-  const unseen=hos.filter(h=>!REACT.some(([k])=>(h.re[k]||[]).includes(myId))).length;
+  const around=hosAround(viewDate), unseen=unseenOf(around).length;
   if(cat){
-    if(cat==='ho') return renderPaper(d,dow,hos);
+    if(cat==='ho') return renderPaper(d,dow,hosAround(viewDate));
     const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소'};
     return `<button class="back" id="back">‹ ${d.getMonth()+1}월 ${d.getDate()}일 목록으로</button>
     <h2 class="sech">${titles[cat]}</h2><div class="t" style="color:var(--sub);font-size:13px">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div style="height:10px"></div>
@@ -571,7 +591,7 @@ function renderDay(){
   else if(lastMine&&lastMine.type==='out'){state=`<div class="ph-line">퇴근 <b>${hm(lastMine.at)}</b> · 오늘 <b>${fmtMin(mine.min)}</b> 근무</div>`;}
   const hero=isToday?`<div class="ph"><div class="ph-t">지금</div><div class="ph-clock" id="clk">${nowHM()}</div>${state}${btn}
     <div class="msg ${pm?'show '+pm.cls:''}" id="pm">${pm?esc(pm.text):''}</div>
-    <div class="ph-sub">매장 반경 ${S.settings.radius}m 안에서만 눌려요${S.settings.demo?' · 시연 모드 켜짐':''}</div></div>`:'';
+    <div class="ph-sub">매장 반경 ${S.settings.radius}m 안에서만 눌려요${S.settings.demo?' · 시연 모드 켜짐':''}</div>${isToday&&working&&around.length?`<div class="hp"><div class="hph">출근하면 먼저 읽기 · 인수인계 ${around.length}건</div>${around.map(h=>{const ok=(h.re.ok||[]).includes(myId);return `<div class="hpi"><button class="hpt" data-cat="ho">${h.item?esc(itemName(h.item))+' · ':''}${esc(h.text)}</button><div class="hpm">${esc(uname(h.by))} 씀${h.date!==viewDate?' · 어제':''}<button class="pc ${ok?'on':''}" data-h="${h.id}" data-k="ok">✓ ${ok?'확인함':'확인'}</button></div></div>`}).join('')}</div>`:''}</div>`:'';
   const left=list=>list.filter(t=>!taskDone[t.id]).length;
   const badge=(n,done='완료')=>n?`<span class="cnt-b">${n}</span>`:`<span class="done-t">${done}</span>`;
   const gasDoor=!(taskDone.cl_gas&&taskDone.cl_door);
@@ -586,7 +606,7 @@ function renderDay(){
   <div class="lcard">
     ${rowHtml('duty','근무 체크',badge(left(DUTIES.am)+left(DUTIES.pm)))}
     ${rowHtml('close','마감',(gasDoor&&left(clList)?'<span class="hint-t">가스·문 확인 전</span>':'')+badge(left(clList)))}
-    ${rowHtml('ho','인수인계',hos.length?badge(unseen,'확인 완료'):'<span class="done-t">없음</span>')}
+    ${rowHtml('ho','인수인계',around.length?badge(unseen,'확인 완료'):'<span class="done-t">없음</span>')}
     ${rowHtml('clean','청소',badge(left(TASKS)))}
   </div>
   <div class="wcard"><div class="wh">${isToday?'오늘':'이날'} 근무자</div>${who||'<div class="wrow wait"><span class="wn">이날 근무표가 없어요</span></div>'}</div>`;

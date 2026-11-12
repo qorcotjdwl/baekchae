@@ -222,6 +222,16 @@ body.paper-on .app{padding-bottom:0}
 .rppre{white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.55;margin:0;background:#f4f1ec;border-radius:10px;padding:10px 12px}
 .rpgo{margin-top:4px;padding:17px;font-size:17px}
 .rpl{display:grid;grid-template-columns:minmax(0,1fr) 64px 118px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.rpl:last-of-type{border-bottom:none}.rpl span{font-weight:800;font-size:15px}.rpl .rpin{width:100%}
+.rvc{margin-top:24px;width:86%;box-sizing:border-box;background:#1f1b16;color:#fff;border:3px solid #d32f2f;border-radius:14px;padding:22px 16px 12px;text-align:left;position:relative}
+.rvc .tg{position:absolute;top:-13px;left:14px;background:#d32f2f;color:#fff;font-size:13px;font-weight:800;border-radius:8px;padding:2px 10px}
+.rvc .l{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0;font-size:16px}.rvc .l span{font-size:14px;opacity:.85;white-space:nowrap}
+.rvlab{font-size:13px;color:var(--sub);margin:4px 0 6px}.rvchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.rvchip{border:1.5px solid var(--ink);background:#fff;color:var(--ink);border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700;font-family:inherit}.rvchip.on{background:var(--ink);color:#fff}
+.rvin{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:15px;font-family:inherit;background:#fff;margin-bottom:10px}
+.rvf{display:grid;grid-template-columns:84px minmax(0,1fr);gap:8px;align-items:center}.rvf span{font-size:14px}
+.rvcard{background:#fff;border:1.5px solid var(--ink);border-radius:14px;padding:12px 14px;margin-bottom:8px}.rvcard b{font-size:18px}.rvcard .s{font-size:14px;margin-top:3px}.rvcard .m{font-size:13px;color:var(--sub);margin-top:3px;white-space:pre-wrap}
+.rvcard .act{display:flex;gap:12px;align-items:center;margin-top:6px;font-size:13px}.rvcard .act .who{margin-right:auto;color:var(--sub);font-size:12px}.rvcard .act button{border:none;background:none;color:var(--sub);font-size:13px;font-family:inherit;padding:2px}
+.mk .mkr{font-size:9px;border:1px solid #d32f2f;color:#d32f2f;border-radius:4px;padding:0 2px}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -614,6 +624,42 @@ function bindReport(day){const st=rpState(day);
   const b=$('rpsend');if(b)b.onclick=async()=>{const text=rpText(day);
     if(navigator.share){try{await navigator.share({text});return}catch(e){if(e&&e.name==='AbortError')return}}
     try{await navigator.clipboard.writeText(text);toast('복사됐어요. 카톡 대화방에 붙여넣으세요')}catch(e){toast('보내기가 안 돼요. 위 글을 꾹 눌러 복사해 주세요')}};}
+
+/* ===== 예약 (days/{날짜}.tasks 안에 rsv_ 로 저장 — 직원도 쓸 수 있는 칸) ===== */
+const rsvOf=day=>Object.entries(S.tasks[day]||{}).filter(([k,v])=>k.startsWith('rsv_')&&v&&v.rsv).map(([k,v])=>({id:k,...v.rsv,uid:v.uid})).sort((a,b)=>a.t<b.t?-1:1);
+let rsvF={t:'',n:'',tel:'',memo:'',edit:null,tOther:false,nOther:false};
+const RSV_T=['17:00','17:30','18:00','18:30','19:00','19:30','20:00'],RSV_N=['1','2','3','4','5','6'];
+function rsvCover(day){const L=rsvOf(day);if(!L.length)return '';
+  return `<div class="rvc"><div class="tg">${day===bizDate(new Date())?'오늘':'이날'} 예약 ${L.length}건</div>${L.map(r=>`<div class="l"><b>예약 ${esc(r.t)} · ${esc(r.n)}명</b>${r.tel?`<span>${esc(r.tel)}</span>`:''}</div>`).join('')}</div>`;}
+function renderRsv(day){const L=rsvOf(day),f=rsvF;
+  const chip=(v,on,attr)=>`<button class="rvchip ${on?'on':''}" ${attr}>${v}</button>`;
+  return `<div class="card"><h3>${f.edit?'예약 고치기':'새 예약'}</h3>
+   <div class="rvlab">시간 고르기</div><div class="rvchips">${RSV_T.map(t=>chip(t,!f.tOther&&f.t===t,`data-rt="${t}"`)).join('')}${chip('직접',f.tOther,'data-rt="*"')}</div>
+   ${f.tOther?`<input class="rvin" id="rvt" type="time" value="${esc(f.t)}">`:''}
+   <div class="rvlab">인원</div><div class="rvchips">${RSV_N.map(n=>chip(n,!f.nOther&&f.n===n,`data-rn="${n}"`)).join('')}${chip('7+',f.nOther,'data-rn="*"')}</div>
+   ${f.nOther?`<input class="rvin" id="rvn" inputmode="numeric" placeholder="인원 (숫자)" value="${esc(f.n)}">`:''}
+   <div class="rvf"><span>전화번호</span><input class="rvin" id="rvtel" type="tel" placeholder="(선택) 010-" value="${esc(f.tel)}"></div>
+   <div class="rvf"><span>이름·메모</span><input class="rvin" id="rvmemo" placeholder="(선택)" value="${esc(f.memo)}"></div>
+   <button class="btn full" id="rvsave" style="margin-top:6px">${f.edit?'고친 내용 저장':'예약 저장'}</button>
+   ${f.edit?'<button class="btn ghost full" id="rvcancel" style="margin-top:8px">고치기 취소</button>':''}</div>
+   ${L.length?L.map(r=>`<div class="rvcard"><b>${esc(r.t)} · ${esc(r.n)}명</b>${r.tel?`<div class="s">${esc(r.tel)}</div>`:''}${r.memo?`<div class="m">${esc(r.memo)}</div>`:''}
+     <div class="act"><span class="who">${esc(uname(r.uid))} 입력</span><button data-rve="${r.id}">고치기</button><button data-rvd="${r.id}">지우기</button></div></div>`).join('')
+     :'<div class="t" style="text-align:center;color:var(--sub);margin:14px 0">이날 예약이 없어요</div>'}
+   <div class="t" style="font-size:12px;color:var(--sub);text-align:center;margin-top:6px">예약이 있으면 첫 화면(큰 날짜)에 빨간 테두리로 보여요</div>`;}
+function bindRsv(day){const f=rsvF,keep=()=>{const a=$('rvtel'),b=$('rvmemo'),c=$('rvt'),d=$('rvn');if(a)f.tel=a.value;if(b)f.memo=b.value;if(c)f.t=c.value;if(d)f.n=d.value;};
+  document.querySelectorAll('[data-rt]').forEach(b=>b.onclick=()=>{keep();if(b.dataset.rt==='*'){f.tOther=true;if(RSV_T.includes(f.t))f.t=''}else{f.tOther=false;f.t=b.dataset.rt}render()});
+  document.querySelectorAll('[data-rn]').forEach(b=>b.onclick=()=>{keep();if(b.dataset.rn==='*'){f.nOther=true;if(RSV_N.includes(f.n))f.n=''}else{f.nOther=false;f.n=b.dataset.rn}render()});
+  const sv=$('rvsave');if(sv)sv.onclick=()=>{keep();const t=(f.t||'').trim(),n=String(f.n||'').replace(/[^0-9]/g,'');
+    if(!t){toast('시간을 골라 주세요');return}if(!n){toast('인원을 골라 주세요');return}
+    const id=f.edit||('rsv_'+Date.now().toString(36));
+    setDoc(dayRef(),{tasks:{[id]:{uid:myId,at:new Date().toISOString(),rsv:{t,n,tel:f.tel.trim(),memo:f.memo.trim()}}}},{merge:true}).then(()=>toast(f.edit?'예약을 고쳤어요':'예약을 저장했어요')).catch(fail);
+    rsvF={t:'',n:'',tel:'',memo:'',edit:null,tOther:false,nOther:false};render();};
+  const cc=$('rvcancel');if(cc)cc.onclick=()=>{rsvF={t:'',n:'',tel:'',memo:'',edit:null,tOther:false,nOther:false};render()};
+  document.querySelectorAll('[data-rve]').forEach(b=>b.onclick=()=>{const r=rsvOf(day).find(x=>x.id===b.dataset.rve);if(!r)return;
+    rsvF={t:r.t,n:r.n,tel:r.tel||'',memo:r.memo||'',edit:r.id,tOther:!RSV_T.includes(r.t),nOther:!RSV_N.includes(r.n)};window.scrollTo(0,0);render()});
+  document.querySelectorAll('[data-rvd]').forEach(b=>b.onclick=()=>{const r=rsvOf(day).find(x=>x.id===b.dataset.rvd);if(!r)return;
+    openSheet(`<h2>예약 지우기</h2><div class="t" style="margin-bottom:14px">${esc(r.t)} · ${esc(r.n)}명${r.tel?' · '+esc(r.tel):''}<br>이 예약을 지울까요?</div><div class="inline"><button class="btn ghost" id="rdc">취소</button><button class="btn red" id="rdo">지우기</button></div>`);
+    $('rdc').onclick=closeSheet;$('rdo').onclick=()=>{closeSheet();document.activeElement&&document.activeElement.blur();setDoc(dayRef(),{tasks:{[r.id]:deleteField()}},{merge:true}).then(()=>{toast('예약을 지웠어요');render()}).catch(fail)};});}
 /* ===== 오늘(일) 화면 ===== */
 function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   return `<div class="ho">${h.item?`<div class="tag">${esc(itemName(h.item))}</div>`:''}<div class="meta"><span><b>${esc(uname(h.by))}</b> · ${hm(h.at)}</span>${h.edits.length?`<span>수정됨 · ${esc(uname(h.edits[h.edits.length-1].by))}</span>`:''}</div>
@@ -678,7 +724,7 @@ function renderDay(){
   const doneCnt=TASKS.filter(t=>taskDone[t.id]).length;
   if(!detail) return `<button class="cover" id="cover">
     <div class="ym">${d.getFullYear()}년 ${d.getMonth()+1}월</div><div class="day">${d.getDate()}</div>
-    <div class="dow ${dow===0?'sun':dow===6?'sat':''}">${DOW[dow]}요일</div><div class="hint">눌러서 오늘 근무 보기</div></button>`;
+    <div class="dow ${dow===0?'sun':dow===6?'sat':''}">${DOW[dow]}요일</div>${rsvCover(viewDate)}<div class="hint">눌러서 오늘 근무 보기</div></button>`;
 
   const secHo=`<div class="card"><h3>인수인계 <span class="cnt">${hos.length}건</span></h3>
     ${hos.map(hoCard).join('')}
@@ -707,10 +753,10 @@ function renderDay(){
   const around=hosAround(viewDate), unseen=unseenOf(around).length;
   if(cat){
     if(cat==='ho') return renderPaper(d,dow,hosAround(viewDate));
-    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소',rpt:'마감 보고'};
+    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소',rpt:'마감 보고',rsv:'예약'};
     return `<button class="back" id="back">‹ ${d.getMonth()+1}월 ${d.getDate()}일 목록으로</button>
     <h2 class="sech">${titles[cat]}</h2><div class="t" style="color:var(--sub);font-size:13px">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div style="height:10px"></div>
-    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:cat==='rpt'?renderReport(viewDate):secClean}`;
+    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:cat==='rpt'?renderReport(viewDate):cat==='rsv'?renderRsv(viewDate):secClean}`;
   }
   // ── 두 번째 화면 (시안 C-3) ──
   const pm=punchMsg&&punchMsg.until>Date.now()?punchMsg:null;
@@ -739,6 +785,7 @@ function renderDay(){
     ${rowHtml('close','마감',(gasDoor&&left(clList)?'<span class="hint-t">가스·문 확인 전</span>':'')+badge(left(clList)))}
     ${rowHtml('ho','인수인계',around.length?badge(unseen,'확인 완료'):'<span class="done-t">없음</span>')}
     ${rowHtml('clean','청소',badge(left(TASKS)))}
+    ${(()=>{const n=rsvOf(viewDate).length;return rowHtml('rsv','예약',n?`<span class="cnt-b">${n}</span>`:'<span class="done-t">없음</span>')})()}
     ${REPORT_ON?rowHtml('rpt','마감 보고','<span class="done-t">카톡 양식 · 시험 중</span>'):''}
   </div>
   <div class="wcard"><div class="wh">${isToday?'오늘':'이날'} 근무자</div>${who||'<div class="wrow wait"><span class="wn">이날 근무표가 없어요</span></div>'}</div>`;
@@ -753,6 +800,7 @@ function bindDay(){
   const pi=$('pin_');if(pi)pi.onclick=()=>punch('in');
   const po=$('pout');if(po)po.onclick=()=>checkOut();
   if(cat==='rpt')bindReport(viewDate);
+  if(cat==='rsv')bindRsv(viewDate);
   document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.task,cur=(S.tasks[viewDate]||{})[id];
     if(cur){ if(cur.uid!==myId&&!isAdmin()){toast(uname(cur.uid)+'님이 체크한 항목이에요');return}
@@ -802,13 +850,13 @@ function renderMonth(){
   const first=new Date(y,m-1,1),days=new Date(y,m,0).getDate(),today=bizDate(new Date());
   let cells='';for(let i=0;i<first.getDay();i++)cells+='<div class="c empty"></div>';
   for(let d=1;d<=days;d++){const k=`${y}-${pad(m)}-${pad(d)}`,dw=new Date(y,m-1,d).getDay();
-    const sc=S.schedule[k]||[],hc=S.handovers.filter(h=>h.date===k).length,tc=Object.keys(S.tasks[k]||{}).length;
+    const sc=S.schedule[k]||[],hc=S.handovers.filter(h=>h.date===k).length,tc=Object.keys(S.tasks[k]||{}).filter(x=>!x.startsWith('rsv_')).length,rc=rsvOf(k).length;
     cells+=`<button class="c ${dw===0?'sun':dw===6?'sat':''} ${k===today?'today':''}" data-day="${k}"><div class="d">${d}</div>
       ${sc.slice(0,4).map(s=>`<div class="p">${esc(uname(s.u))}</div>`).join('')}${sc.length>4?`<div class="p">+${sc.length-4}</div>`:''}
-      <div class="mk">${hc?'<span class="mkh">글</span>':''}${tc?'<span class="mkt">✓</span>':''}</div></button>`}
+      <div class="mk">${hc?'<span class="mkh">글</span>':''}${tc?'<span class="mkt">✓</span>':''}${rc?'<span class="mkr">예</span>':''}</div></button>`}
   return `<div class="mhead"><button id="mp">‹</button><div class="m"><small>${y}</small>${m}월</div><button id="mn">›</button></div>
    <div class="card" style="padding:10px"><div class="cal">${DOW.map(x=>`<div class="h">${x}</div>`).join('')}${cells}</div></div>
-   <div class="t" style="font-size:12px;color:var(--sub);text-align:center">날짜를 누르면 그날 화면으로 · 글 = 인수인계 있음 · ✓ = 체크 기록 있음</div>`;
+   <div class="t" style="font-size:12px;color:var(--sub);text-align:center">날짜를 누르면 그날 화면으로 · 글 = 인수인계 있음 · ✓ = 체크 기록 있음 · 예 = 예약 있음</div>`;
 }
 function bindMonth(){
   const mv=n=>{const [y,m]=viewMonth.split('-').map(Number);const d=new Date(y,m-1+n,1);viewMonth=d.getFullYear()+'-'+pad(d.getMonth()+1);ensureMonth();render()};
@@ -1023,7 +1071,7 @@ function render(){
   const body=tab==='day'?renderDay():tab==='month'?renderMonth():renderAdmin();
   // 입력 중인 글 보존
   const keep=$('hotext')?$('hotext').value:'';
-  if(document.activeElement&&(document.activeElement.tagName==='TEXTAREA'||document.activeElement.classList.contains('rpin')))return;
+  if(document.activeElement&&(document.activeElement.tagName==='TEXTAREA'||document.activeElement.classList.contains('rpin')||document.activeElement.classList.contains('rvin')))return;
   if($('modal').classList.contains('show')&&document.activeElement&&$('sheet').contains(document.activeElement)) return; // 수정창 입력 중엔 화면 유지
   $('app').innerHTML=paper?body:`<header><div class="brand">백채 근무일지<small>성지길점</small></div><button class="me" id="logout">${esc(me.name)} · 나가기</button></header><div class="wrap">${body}</div>`;
   if($('hotext'))$('hotext').value=keep;

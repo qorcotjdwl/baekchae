@@ -232,6 +232,9 @@ body.paper-on .app{padding-bottom:0}
 .rvcard{background:#fff;border:1.5px solid var(--ink);border-radius:14px;padding:12px 14px;margin-bottom:8px}.rvcard b{font-size:18px}.rvcard .s{font-size:14px;margin-top:3px}.rvcard .m{font-size:13px;color:var(--sub);margin-top:3px;white-space:pre-wrap}
 .rvcard .act{display:flex;gap:12px;align-items:center;margin-top:6px;font-size:13px}.rvcard .act .who{margin-right:auto;color:var(--sub);font-size:12px}.rvcard .act button{border:none;background:none;color:var(--sub);font-size:13px;font-family:inherit;padding:2px}
 .mk .mkr{font-size:9px;border:1px solid #d32f2f;color:#d32f2f;border-radius:4px;padding:0 2px}
+.wktag{font-size:11px;border:1.5px solid var(--ink);border-radius:10px;padding:0 7px;margin-left:6px;font-weight:700;vertical-align:middle}
+.wknote{font-size:12px;color:var(--sub);background:var(--bg);border-radius:8px;padding:7px 10px;margin-top:8px}
+.wksw{width:46px;height:26px;border-radius:13px;background:#d6cec3;border:none;position:relative;flex:none;padding:0}.wksw:after{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}.wksw.on{background:var(--ink)}.wksw.on:after{left:23px}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -882,7 +885,7 @@ function computePay(evs){
   const tol=S.settings.payTol||0, by={};
   evs.forEach(e=>{((by[e.uid]=by[e.uid]||{})[e.date]=by[e.uid][e.date]||[]).push(e)});
   return Object.entries(by).map(([uid,days])=>{
-    const list=Object.keys(days).sort().map(date=>{
+    const all=Object.keys(days).sort().map(date=>{
       const pairs=[],flags=[];let cur=null;
       days[date].forEach(e=>{ if(e.type==='in'){ if(cur){pairs.push({in:cur,out:null});flags.push('퇴근 누락')} cur=e; }
         else { if(cur){pairs.push({in:cur,out:e});cur=null} else {pairs.push({in:null,out:e});flags.push('출근 누락')} } });
@@ -894,9 +897,12 @@ function computePay(evs){
       const edited=days[date].some(e=>e.edits.length);
       return {date,pairs,min,paid,flags,edited};
     });
+    const u0=S.users.find(x=>x.id===uid),wk=!!(u0&&u0.weekendOnly);
+    const isWE=d=>{const w=parse(d.date).getDay();return w===0||w===6};
+    const skip=wk?all.filter(d=>!isWE(d)):[];const list=wk?all.filter(isWE):all;
     const totalMin=list.reduce((a,d)=>a+d.min,0), paidMin=list.reduce((a,d)=>a+d.paid,0);
-    return {uid,list,totalMin,paidMin,check:list.filter(d=>d.flags.length).length};
-  }).sort((a,b)=>uname(a.uid).localeCompare(uname(b.uid),'ko'));
+    return {uid,list,totalMin,paidMin,check:list.filter(d=>d.flags.length).length,wk,skipDays:skip.length,skipMin:skip.reduce((a,d)=>a+d.min,0)};
+  }).filter(r=>r.list.length||r.skipDays).sort((a,b)=>uname(a.uid).localeCompare(uname(b.uid),'ko'));
 }
 function renderPay(){
   const wage=S.settings.wage||14000, tol=S.settings.payTol||0;
@@ -920,7 +926,7 @@ function renderPay(){
     <div class="row"><span>확인 필요</span><b style="color:${sumCheck?'var(--red)':'var(--green)'}">${sumCheck?`⚠️ ${sumCheck}일`:'없음 ✅'}</b></div>
     <button class="btn green full" id="pxls" style="margin-top:10px">엑셀로 다운로드</button></div>
   ${rows.length?rows.map(r=>{const open=payOpen.has(r.uid);return `<div class="card">
-    <button class="tile" data-popen="${r.uid}" style="padding:0;margin:0;background:none"><span class="tx"><b>${esc(uname(r.uid))}</b><small>${r.list.length}일 · ${fmtHM(r.paidMin)} · <b style="color:var(--ink)">${won(Math.round(r.paidMin/60*wage))}</b>${r.check?` · <em>⚠️ 확인 ${r.check}일</em>`:''}</small></span><span class="ar">${open?'⌃':'⌄'}</span></button>
+    <button class="tile" data-popen="${r.uid}" style="padding:0;margin:0;background:none"><span class="tx"><b>${esc(uname(r.uid))}${r.wk?'<span class="wktag">주말만</span>':''}</b><small>${r.list.length}일 · ${fmtHM(r.paidMin)} · <b style="color:var(--ink)">${won(Math.round(r.paidMin/60*wage))}</b>${r.check?` · <em>⚠️ 확인 ${r.check}일</em>`:''}</small></span><span class="ar">${open?'⌃':'⌄'}</span></button>${r.wk&&r.skipDays?`<div class="wknote">평일 근무 ${r.skipDays}일 (${fmtHM(r.skipMin)})은 계산에서 뺐어요</div>`:''}
     ${open?r.list.map(dd=>{const d0=parse(dd.date);return `<div class="row" style="align-items:flex-start;${dd.flags.length?'background:var(--red2);margin:0 -16px;padding:10px 16px':''}"><div>
       <div class="n">${d0.getMonth()+1}/${d0.getDate()} (${DOW[d0.getDay()]})${dd.edited?' <span class="t">✎ 수정됨</span>':''}</div>
       ${dd.pairs.map((p,i)=>`<div class="t">${p.in?hm(p.in.at):'??:??'} ~ ${p.out?hm(p.out.at):'??:??'}${p.min!=null?` · ${fmtHM(p.min)}`:''} <button class="btn sm ghost" style="padding:2px 8px" data-pedit="${r.uid}|${dd.date}|${i}">수정</button></div>`).join('')}
@@ -963,7 +969,7 @@ async function exportPay(){
   const wage=S.settings.wage||14000;
   const sum=[['이름','근무일수','실제 근무시간','인정 시간(30분 단위)','인정 시간(시간)','시급','지급액','확인 필요 일수']];
   const det=[['이름','날짜','요일','출근','퇴근','실제 근무(분)','인정 시간(시간)','확인 필요','수정됨']];
-  payRows.forEach(r=>{sum.push([uname(r.uid),r.list.length,fmtHM(r.totalMin),fmtHM(r.paidMin),r.paidMin/60,wage,Math.round(r.paidMin/60*wage),r.check]);
+  payRows.forEach(r=>{sum.push([uname(r.uid)+(r.wk?' (주말만)':''),r.list.length,fmtHM(r.totalMin),fmtHM(r.paidMin),r.paidMin/60,wage,Math.round(r.paidMin/60*wage),r.check]);
     r.list.forEach(dd=>{const d0=parse(dd.date);dd.pairs.forEach((p,i)=>det.push([uname(r.uid),dd.date,DOW[d0.getDay()],p.in?hm(p.in.at):'',p.out?hm(p.out.at):'',p.min??'',i===0?dd.paid/60:'',i===0?dd.flags.join(', '):'',dd.edited?'예':'']))})});
   sum.push([]);sum.push(['합계','','','',payRows.reduce((a,r)=>a+r.paidMin,0)/60,'',payRows.reduce((a,r)=>a+Math.round(r.paidMin/60*wage),0),'']);
   const name=`백채_알바시간_${payFrom}_${payTo}`;
@@ -986,6 +992,9 @@ function renderAdmin(){
   const att=S.attendance.filter(a=>a.date===viewDate), sc=S.schedule[viewDate]||[];
   return `
   <button class="tile" id="openpay"><span class="ic">💰</span><span class="tx"><b>알바시간 정리</b><small>직원별 근무시간·알바비 계산, 엑셀 다운로드</small></span><span class="ar">›</span></button>
+  <div class="card"><h3>시급 계산 방식 <span class="cnt">켜면 토·일 근무만 계산</span></h3>
+    ${S.users.filter(u=>u.status==='active').map(u=>`<div class="row"><div><div class="n">${esc(u.name)}</div><div class="t" style="font-size:12px">${u.weekendOnly?'주말(토·일)만 계산':'모든 날 계산'}</div></div><button class="wksw ${u.weekendOnly?'on':''}" data-wk="${u.id}" aria-label="주말만 계산"></button></div>`).join('')}
+    <div class="t" style="font-size:12px;color:var(--sub);margin-top:6px">출퇴근 기록은 그대로 남고, 알바시간 정리·엑셀에서만 빠져요</div></div>
   <div class="card"><h3>가입 승인 대기 <span class="cnt">${pend.length}명</span></h3>
     ${pend.length?pend.map(u=>`<div class="row"><div class="n">${esc(u.name)}</div><div class="inline" style="flex:none"><button class="btn sm ghost" data-rej="${u.id}">거절</button><button class="btn sm green" data-ok="${u.id}">승인</button></div></div>`).join(''):'<div class="t">대기 중인 신청이 없어요.</div>'}</div>
   <div class="card"><h3>직원 <span class="cnt">${act.length}/${MAX_STAFF}명</span></h3>
@@ -1009,6 +1018,7 @@ function renderAdmin(){
   <div class="card"><h3>내 비밀번호</h3><button class="btn ghost full" id="mypin">관리자 비밀번호 바꾸기</button></div>`;
 }
 function bindAdmin(){
+  document.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{const u=S.users.find(x=>x.id===b.dataset.wk);if(!u)return;updateDoc(doc(db,'users',u.id),{weekendOnly:!u.weekendOnly}).then(()=>toast(u.name+(u.weekendOnly?': 모든 날 계산':': 주말만 계산'))).catch(fail)});
   if(payView) return bindPay();
   $('openpay').onclick=()=>{payView=true;payRows=null;window.scrollTo(0,0);render();loadPay()};
   document.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>{if(activeStaff().length>=MAX_STAFF){toast('직원은 최대 '+MAX_STAFF+'명이에요');return}

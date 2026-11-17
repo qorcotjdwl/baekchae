@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#1f1b16"><title>BAEKCHAE · Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f1ec;color:#1f1b16;font-family:'Noto Sans KR','Noto Sans Thai',sans-serif;padding-bottom:120px}
+.app{max-width:520px;margin:0 auto}
+.top{background:#1f1b16;color:#fff;padding:14px 16px;font-weight:900;font-size:18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}.top small{font-weight:400;font-size:12px;opacity:.7}
+.tb{display:flex;gap:4px;background:#fff;border-radius:12px;padding:4px;margin:10px 12px}.tb button{flex:1;border:none;background:none;padding:9px 0;border-radius:9px;font-size:14px;font-weight:700;color:#7a7268;font-family:inherit}.tb .on{background:#1f1b16;color:#fff}
+.btns{display:flex;gap:8px;margin:0 12px 10px}.btns button{flex:1;border:2px solid #1f1b16;background:#fff;border-radius:12px;padding:12px 6px;font-weight:800;font-size:14px;font-family:inherit;color:#1f1b16}
+.cd{background:#fff;border-radius:14px;margin:0 12px 8px;padding:10px 14px}.cd h3{font-size:16px;font-weight:900;margin:4px 0}
+.min{font-size:12px;color:#7a7268;border:1.5px dashed #1f1b16;border-radius:8px;padding:5px 8px;margin:4px 0 2px}.min.bad{border-color:#d32f2f;color:#d32f2f;font-weight:700}
+.nt{font-size:12px;color:#7a7268;margin:2px 0}
+.r{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #eee7dd;font-size:15px}.r:last-child{border-bottom:none}.r .n{flex:1;min-width:0}.r .n small{display:block;color:#9a9288;font-size:12px}.r .p{font-weight:700;white-space:nowrap;font-size:14px}
+.r img{width:48px;flex:none}
+.q{display:flex;align-items:center;gap:6px;flex:none}.q button{width:32px;height:32px;border:1.5px solid #1f1b16;border-radius:50%;background:#fff;font-weight:900;font-size:17px;padding:0;color:#1f1b16}.q button.on{background:#1f1b16;color:#fff}.q b{width:18px;text-align:center}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#1f1b16;color:#fff;padding:12px 16px 16px;z-index:6}.bar .in{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}.bar .t{font-size:13px;opacity:.75}.bar .s{font-size:24px;font-weight:900}.bar button{background:#fff;color:#1f1b16;border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;font-family:inherit}.bar button:disabled{opacity:.4}
+.ov{position:fixed;inset:0;background:#fff;z-index:20;overflow:auto}.ov .in{max-width:560px;margin:0 auto;padding:22px 18px 30px}.ov.dark{background:#111}
+.ov h2x{font-size:15px;color:#7a7268;font-weight:500;margin:0 0 12px}
+.ol{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #eee7dd}.ol .k{font-size:22px;font-weight:900}.ol .f{font-size:13px;color:#7a7268}.ol .x{font-size:22px;font-weight:900;white-space:nowrap}
+.otot{display:flex;justify-content:space-between;font-size:26px;font-weight:900;margin-top:16px}
+.cl{width:100%;margin-top:18px;border:2px solid #1f1b16;background:#fff;border-radius:14px;padding:14px;font-size:17px;font-weight:800;font-family:inherit;color:#1f1b16}
+.mimg{overflow:auto}.mimg img{width:100%;display:block}.mimg img.zoom{width:260%}
+.hw{border-bottom:1px solid #eee7dd;padding:14px 0}.hw b{display:block;font-size:17px;margin-bottom:6px}.hw div{white-space:pre-wrap;font-size:16px;line-height:1.6}
+</style></head><body><div class="app" id="app"></div><div class="bar" id="bar"></div>
+<script>
+var D={"en": {"nm": {"belly": "Pork belly (200g)", "jowl": "Pork jowl (180g)", "collar": "Pork collar (180g)", "mush": "Mushrooms + shishito peppers", "kim": "Extra kimchi", "stew": "Pork kimchi stew", "ramen": "Ramen", "tofu": "Tofu", "dump": "Dumplings", "combo": "Combo (ramen 1 / tofu 4 / dumplings 2)", "egg": "Rolled omelet", "cheese": "Cheese rolled omelet", "ham": "Grilled ham", "soju": "Soju / Beer", "makg": "Makgeolli (rice wine)", "halla": "Hallasan 21", "sik": "Sikhye (rice drink)", "soft": "Soft drinks"}, "title": ["Grilled Meat", "Meals", "Add-ons", "Side Dishes", "Drinks"], "ui": {"sel": "items", "tot": "Total", "show": "Show staff", "menu": "View menu", "how": "How to eat", "min": "Grilled meat: minimum 2 servings (you can mix cuts)", "minw": "Please order at least 2 servings of grilled meat", "close": "Close", "reset": "Clear all", "staff": "Please show this screen to our staff", "none": "Tap + to choose your food", "sub": "KRW"}, "note": "Free rice refills / Extra Cheongyang chili free", "one": "1 serving"}, "zh": {"nm": {"belly": "五花肉 (200g)", "jowl": "猪颈肉 (180g)", "collar": "猪肩胛肉 (180g)", "mush": "蘑菇 + 糯米椒", "kim": "加泡菜", "stew": "猪肉泡菜汤", "ramen": "拉面", "tofu": "豆腐", "dump": "饺子", "combo": "综合加料（拉面1份 / 豆腐4块 / 饺子2个）", "egg": "鸡蛋卷", "cheese": "芝士鸡蛋卷", "ham": "烤火腿", "soju": "烧酒 / 啤酒", "makg": "马格利米酒", "halla": "汉拿山21烧酒", "sik": "饭后甜米露", "soft": "饮料"}, "title": ["烤肉", "主食", "加料", "小菜", "酒水 / 饮料"], "ui": {"sel": "项", "tot": "合计", "show": "给店员看", "menu": "查看菜单", "how": "吃法说明", "min": "烤肉最少点2人份（可混合不同部位）", "minw": "烤肉请至少点2人份", "close": "关闭", "reset": "全部清空", "staff": "请把这个画面给店员看", "none": "点 + 选择菜品", "sub": "韩元"}, "note": "米饭无限续 / 青阳辣椒免费加", "one": "1人份"}, "ja": {"nm": {"belly": "サムギョプサル (200g)", "jowl": "豚トロ (180g)", "collar": "豚肩ロース (180g)", "mush": "きのこ + ししとう", "kim": "キムチ追加", "stew": "豚キムチチゲ", "ramen": "ラーメン", "tofu": "豆腐", "dump": "餃子", "combo": "盛り合わせ（ラーメン1 / 豆腐4 / 餃子2）", "egg": "韓国風卵焼き", "cheese": "チーズ卵焼き", "ham": "ハム焼き", "soju": "焼酎 / ビール", "makg": "マッコリ", "halla": "ハルラサン21", "sik": "食後のシッケ", "soft": "ソフトドリンク"}, "title": ["焼肉", "お食事", "追加トッピング", "サイド", "ドリンク"], "ui": {"sel": "点", "tot": "合計", "show": "スタッフに見せる", "menu": "メニューを見る", "how": "食べ方", "min": "焼肉は2人前からご注文いただけます（部位の組み合わせ可）", "minw": "焼肉は2人前以上でご注文ください", "close": "閉じる", "reset": "すべてクリア", "staff": "この画面をスタッフにお見せください", "none": "＋を押して選んでください", "sub": "ウォン"}, "note": "ご飯おかわり自由 / 青陽唐辛子の追加無料", "one": "1人前"}, "th": {"nm": {"belly": "หมูสามชั้น (200g)", "jowl": "คอหมู (180g)", "collar": "สันไหล่หมู (180g)", "mush": "เห็ด + พริกชิชิโตะ", "kim": "เพิ่มกิมจิ", "stew": "ซุปกิมจิหมู", "ramen": "ราเมง", "tofu": "เต้าหู้", "dump": "เกี๊ยว", "combo": "ท็อปปิ้งรวม (ราเมง 1 / เต้าหู้ 4 / เกี๊ยว 2)", "egg": "ไข่ม้วน", "cheese": "ไข่ม้วนชีส", "ham": "แฮมย่าง", "soju": "โซจู / เบียร์", "makg": "มักกอลลี", "halla": "ฮัลลาซาน 21", "sik": "ชิกเฮ น้ำข้าวหวาน", "soft": "น้ำอัดลม"}, "title": ["หมูย่าง", "อาหารจานหลัก", "ท็อปปิ้งเพิ่ม", "เมนูเคียง", "เครื่องดื่ม"], "ui": {"sel": "รายการ", "tot": "รวม", "show": "แสดงให้พนักงานดู", "menu": "ดูเมนู", "how": "วิธีทาน", "min": "หมูย่างสั่งขั้นต่ำ 2 ที่ (เลือกผสมได้)", "minw": "กรุณาสั่งหมูย่างอย่างน้อย 2 ที่", "close": "ปิด", "reset": "ล้างทั้งหมด", "staff": "กรุณาแสดงหน้านี้ให้พนักงานดู", "none": "กด + เพื่อเลือกอาหาร", "sub": "วอน"}, "note": "ข้าวเติมฟรีไม่อั้น / เพิ่มพริกชองยางฟรี", "one": "1 ที่"}};var G=[["bbq", 0, [["belly", "삼겹살 (200g)", 16000], ["jowl", "항정살 (180g)", 18000], ["collar", "가브리살 (180g)", 18000], ["mush", "버섯 + 꽈리고추", 3000], ["kim", "김치 추가", 2000]]], ["meal", 1, [["stew", "돼지김치찌개 (1인)", 10000]]], ["add", 2, [["ramen", "라면사리", 1000], ["tofu", "두부사리", 2000], ["dump", "만두사리", 2000], ["combo", "모둠사리", 3000]]], ["side", 3, [["egg", "달걀말이", 8000], ["cheese", "치즈달걀말이", 9000], ["ham", "햄구이", 8000]]], ["drink", 4, [["soju", "소주 / 맥주", 5000], ["makg", "막걸리", 5000], ["halla", "한라산21", 6000], ["sik", "식후식혜", 3000], ["soft", "음료", 2000]]]];
+var TR_LANGS=[['en','영어'],['zh','중국어'],['ja','일본어'],['th','태국어']];
+var TR_SUB={en:'English',zh:'中文',ja:'日本語',th:'ภาษาไทย'};
+var TRANS=[
+{t:'메뉴 안내와 주문',ko:'저희 메뉴는 김치찌개와 김치 + 고기구이입니다. 메뉴판 보시고 주문하실 때 말씀해 주세요.',
+ en:['Our menu has kimchi stew and Korean BBQ with grilled kimchi.\nPlease take a look at the menu and let us know when you\'re ready to order.','아워 메뉴 해즈 김치 스튜 앤 코리안 스타일 그릴드 미트. 플리즈 테이크 어 룩 앳 더 메뉴 앤 렛 어스 노우 웬 유어 레디 투 오더.'],
+ zh:['我们的菜单有泡菜汤和韩式泡菜烤肉。\n请您看一下菜单，准备好点餐时告诉我们。','워먼 더 차이딴 여우 파오차이탕 허 한스 카오러우. 칭 닌 칸 이샤 차이딴, 준뻬이 하오 디엔찬 스 까오쑤 워먼.'],
+ ja:['当店のメニューはキムチチゲと、キムチと焼く韓国式焼肉です。\nメニューをご覧になって、ご注文がお決まりになりましたらお声がけください。','토-텐노 메뉴-와 기무치 치게토 칸코쿠시키 야키니쿠데스. 메뉴-오 고란니 낫테, 고추-몬가 오키마리니 나리마시타라 오코에가케 쿠다사이.'],
+ th:['ร้านเรามีเมนูซุปกิมจิและบาร์บีคิวเกาหลีย่างกับกิมจิค่ะ\nดูเมนูแล้ว ถ้าพร้อมสั่งอาหาร เรียกพนักงานได้เลยนะคะ','란 라오 미- 메-누- 쑵 낌찌 래 바-비-키우 까올리- 카. 두- 메-누- 래-우, 타- 프롬 쌍 아-한, 리-악 파낙응안 다이 러-이 나카.']},
+{t:'김치찌개 먹는 법',ko:'먼저 찌개 밑에 있는 고기를 잘라 주시고, 3~4분 더 끓여 드시면 됩니다. 밥과 국물이 더 필요하시면 말씀해 주세요. 맛있게 드세요.',
+ en:['How to enjoy kimchi stew\nFirst, cut the meat at the bottom of the stew, then let it boil for 3–4 more minutes.\nIf you\'d like more rice or broth, just let us know. Enjoy your meal!','하우 투 인조이 김치 스튜. 퍼스트, 컷 더 미트 앳 더 바텀 오브 더 스튜, 덴 렛 잇 보일 포 쓰리 투 포 모어 미닛츠. 이프 유드 라이크 모어 라이스 오어 브로스, 저스트 렛 어스 노우. 인조이 유어 밀!'],
+ zh:['泡菜汤的吃法\n请先把锅底的肉剪开，再煮3到4分钟就可以吃了。\n如果需要加米饭或汤，请告诉我们。祝您用餐愉快！','파오차이탕 더 츠파. 칭 시엔 바 궈디 더 러우 지엔카이, 짜이 주 싼 따오 쓰 펀중 지우 커이 츠 러. 루궈 쉬야오 지아 미판 훠 탕, 칭 까오쑤 워먼. 주 닌 용찬 위콰이!'],
+ ja:['キムチチゲの食べ方\nまず鍋の底にあるお肉を切ってから、さらに3〜4分ほど煮込んでお召し上がりください。\nご飯やスープのおかわりが必要でしたら、お気軽にお声がけください。どうぞごゆっくりお召し上がりください。','기무치 치게노 타베카타. 마즈 나베노 소코니 아루 오니쿠오 킷테카라, 사라니 산 욘푼호도 니콘데 오메시아가리 쿠다사이. 고항야 스-프노 오카와리가 히쓰요-데시타라, 오키가루니 오코에가케 쿠다사이. 도-조 고윳쿠리 오메시아가리 쿠다사이.'],
+ th:['วิธีทานซุปกิมจิ\nก่อนอื่น ตัดเนื้อที่อยู่ก้นหม้อก่อน แล้วต้มต่ออีก 3–4 นาที ก็ทานได้เลยค่ะ\nถ้าต้องการข้าวหรือน้ำซุปเพิ่ม บอกพนักงานได้เลยนะคะ ขอให้อร่อยนะคะ','위티- 탄 쑵 낌찌. 껀 은, 땃 느-아 티- 유- 꼰 머- 껀, 래-우 똠 떠- 익 쌈 씨- 나-티-, 꺼 탄 다이 러-이 카. 타- 떵깐 카-우 르- 남쑵 프-암, 버-억 파낙응안 다이 러-이 나카. 커- 하이 아로-이 나카.']},
+{t:'김치 + 고기구이 먹는 법',ko:'불판이 달궈지면 고기를 구워 주세요. 김치, 두부, 꽈리고추도 아래쪽에 같이 구워 주세요.\n* 불판은 가운데 화력이 가장 세니, 가운데서 익히다가 익은 고기는 위쪽으로 옮겨 주세요.\n* 첫 점은 소금만 찍어 드시는 것을 추천해요. 두 번째부터는 구운 김치, 쌈장, 쌈, 파채 등 취향에 맞게 드세요. 맛있게 드세요.',
+ en:['How to enjoy Korean BBQ with grilled kimchi\nOnce the grill is hot, start grilling the meat.\nGrill the kimchi, tofu, and shishito peppers together on the lower part of the grill.\n* The center of the grill is the hottest. Cook the meat in the center, then move cooked pieces to the top.\n* We recommend the first bite with just salt. After that, enjoy it your way with grilled kimchi, ssamjang (dipping sauce), lettuce wraps, or green onion salad.\nEnjoy your meal!','하우 투 인조이 코리안 비비큐. 원스 더 그릴 이즈 핫, 스타트 그릴링 더 미트. 그릴 더 김치, 토푸, 앤 시시토 페퍼스 투게더 온 더 로워 파트 오브 더 그릴. 더 센터 오브 더 그릴 이즈 더 핫티스트. 쿡 더 미트 인 더 센터, 덴 무브 쿡트 피시스 투 더 탑. 위 레커멘드 더 퍼스트 바이트 위드 저스트 솔트. 애프터 댓, 인조이 잇 유어 웨이 위드 그릴드 김치, 쌈장, 레터스 랩스, 오어 그린 어니언 샐러드. 인조이 유어 밀!'],
+ zh:['韩式泡菜烤肉的吃法\n烤盘烧热后，就可以开始烤肉了。\n泡菜、豆腐和糯米椒也请放在烤盘下方一起烤。\n* 烤盘中间火力最大，请在中间烤熟，烤好的肉移到上方即可。\n* 第一块建议只蘸盐吃，之后可以按个人口味搭配烤泡菜、包饭酱、生菜包肉、葱丝等一起享用。\n祝您用餐愉快！','한스 카오러우 더 츠파. 카오판 사오러 허우, 지우 커이 카이스 카오러우 러. 파오차이, 떠우푸 허 눠미쟈오 예 칭 팡짜이 카오판 샤팡 이치 카오. 카오판 중지엔 훠리 쭈이따, 칭 짜이 중지엔 카오수, 카오하오 더 러우 이따오 상팡 지커. 디이콰이 지엔이 즈 잔 옌 츠, 즈허우 커이 안 거런 커우웨이 따페이 카오 파오차이, 바오판쟝, 성차이 바오러우, 충쓰 덩 이치 샹용. 주 닌 용찬 위콰이!'],
+ ja:['キムチと焼く韓国式焼肉の食べ方\n鉄板が温まったら、お肉を焼いてください。\nキムチ、豆腐、ししとうも下の方で一緒に焼いてください。\n※鉄板は真ん中が一番火力が強いので、真ん中で焼いて、焼けたお肉は上の方へ移してください。\n※最初の一切れは塩だけでお召し上がりいただくのがおすすめです。二切れ目からは焼きキムチ、サムジャン、サンチュ、ネギサラダなど、お好みでどうぞ。\nどうぞごゆっくりお召し上がりください。','야키니쿠노 타베카타. 텟판가 아타타맛타라, 오니쿠오 야이테 쿠다사이. 기무치, 토-후, 시시토-모 시타노 호-데 잇쇼니 야이테 쿠다사이. 텟판와 만나카가 이치반 카료쿠가 쓰요이노데, 만나카데 야이테, 야케타 오니쿠와 우에노 호-에 우쓰시테 쿠다사이. 사이쇼노 히토키레와 시오다케데 오메시아가리 이타다쿠노가 오스스메데스. 후타키레메카라와 야키기무치, 사무장, 산추, 네기사라다 나도, 오코노미데 도-조. 도-조 고윳쿠리 오메시아가리 쿠다사이.'],
+ th:['วิธีทานบาร์บีคิวเกาหลีย่างกับกิมจิ\nเมื่อกระทะร้อนแล้ว เริ่มย่างเนื้อได้เลยค่ะ\nกิมจิ เต้าหู้ และพริกชิชิโตะ ย่างพร้อมกันที่ด้านล่างของกระทะได้เลยค่ะ\n* ตรงกลางกระทะไฟแรงที่สุด ย่างตรงกลางจนสุก แล้วย้ายเนื้อที่สุกแล้วไปไว้ด้านบนค่ะ\n* ชิ้นแรกแนะนำให้จิ้มเกลืออย่างเดียว ชิ้นต่อไปทานคู่กับกิมจิย่าง ซัมจัง ผักห่อ หรือต้นหอมซอย ได้ตามชอบเลยค่ะ\nขอให้อร่อยนะคะ','위티- 탄 바-비-키우 까올리-. 므-아 끄라타 런 래-우, 르-ㅁ 양 느-아 다이 러-이 카. 낌찌, 따오후-, 래 프릭 치치또, 양 프롬깐 티- 단랑 컹 끄라타 다이 러-이 카. 뜨롱끌랑 끄라타 파이 랭 티-쑷, 양 뜨롱끌랑 쫀 쑥, 래-우 야-이 느-아 티- 쑥 래-우 빠이 와이 단본 카. 친 래-ㄱ 내남 하이 찜 끌르-아 양 디-아우, 친 떠- 빠이 탄 쿠- 깝 낌찌 양, 쌈짱, 팍 허-, 르- 똔험 써-이 다이 따-ㅁ 촙 러-이 카. 커- 하이 아로-이 나카.']},
+];
+
+var lang='en',Q={};
+var LMAP={en:'en',zh:'zh',ja:'ja',th:'th'};
+try{var bl=(navigator.language||'').slice(0,2);if(LMAP[bl])lang=bl}catch(e){}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function won(n){var v=n.toLocaleString('en-US');return lang==='en'?'₩'+v:lang==='th'?v+' '+D[lang].ui.sub:v+D[lang].ui.sub}
+var PR={},KO={};G.forEach(function(g){g[2].forEach(function(it){PR[it[0]]=it[2];KO[it[0]]=it[1]})});
+var MEAT=['belly','jowl','collar'];
+function meatN(){return MEAT.reduce(function(a,k){return a+(Q[k]||0)},0)}
+function render(){var d=D[lang],u=d.ui;document.documentElement.lang=lang;
+ var h='<div class="top">BAEKCHAE <small>백채 김치찌개</small></div><div class="tb">'+TR_LANGS.map(function(l){return '<button class="'+(lang===l[0]?'on':'')+'" data-l="'+l[0]+'">'+TR_SUB[l[0]]+'</button>'}).join('')+'</div>';
+ h+='<div class="btns"><button id="bm">'+u.menu+'</button><button id="bh">'+u.how+'</button></div>';
+ G.forEach(function(g){h+='<div class="cd"><h3>'+esc(d.title[g[1]])+'</h3>';
+  if(g[0]==='bbq'){var mn=meatN();h+='<div class="min'+(mn===1?' bad':'')+'">'+esc(u.min)+'</div>'}
+  if(g[0]==='meal')h+='<div class="nt">'+esc(d.note)+'</div>';
+  g[2].forEach(function(it){var id=it[0],n=Q[id]||0;
+   h+='<div class="r">'+(id==='stew'?'<img src="menu/jjigae.png" alt="">':'')+'<span class="n">'+esc(d.nm[id])+(id==='stew'?' · '+esc(d.one):'')+'<small>'+esc(it[1])+'</small></span><span class="p">'+won(it[2])+'</span><span class="q"><button data-m="'+id+'">−</button><b>'+n+'</b><button class="'+(n?'on':'')+'" data-p="'+id+'">+</button></span></div>'});
+  h+='</div>'});
+ h+='<div style="text-align:center;margin:10px 0"><button id="br" style="border:none;background:none;color:#7a7268;text-decoration:underline;font-family:inherit;font-size:13px">'+u.reset+'</button></div>';
+ document.getElementById('app').innerHTML=h;
+ var cnt=0,sum=0;Object.keys(Q).forEach(function(k){cnt+=Q[k];sum+=Q[k]*PR[k]});
+ var bad=meatN()===1;
+ document.getElementById('bar').innerHTML='<div class="in"><div><div class="t">'+(bad?esc(u.minw):cnt?cnt+' '+u.sel:esc(u.none))+'</div><div class="s">'+u.tot+' '+won(sum)+'</div></div><button id="bs"'+(cnt&&!bad?'':' disabled')+'>'+u.show+'</button></div>';
+ bind()}
+function ov(html,dark){var o=document.createElement('div');o.className='ov'+(dark?' dark':'');o.innerHTML='<div class="in">'+html+'<button class="cl">'+D[lang].ui.close+'</button></div>';document.body.appendChild(o);o.querySelector('.cl').onclick=function(){o.remove()};return o}
+function bind(){
+ document.querySelectorAll('[data-l]').forEach(function(b){b.onclick=function(){lang=b.dataset.l;render()}});
+ document.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){Q[b.dataset.p]=(Q[b.dataset.p]||0)+1;render()}});
+ document.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){var k=b.dataset.m;if(Q[k]){Q[k]--;if(!Q[k])delete Q[k]}render()}});
+ document.getElementById('br').onclick=function(){Q={};render()};
+ document.getElementById('bm').onclick=function(){var o=ov('<div class="mimg"><img src="menu/menu_'+lang+'.jpg" alt=""></div>',true);o.querySelector('img').onclick=function(e){e.target.classList.toggle('zoom')}};
+ document.getElementById('bh').onclick=function(){ov('<h2>'+D[lang].ui.how+'</h2>'+TRANS.map(function(x){return '<div class="hw"><div>'+esc(x[lang][0])+'</div></div>'}).join(''))};
+ var bs=document.getElementById('bs');if(bs)bs.onclick=function(){var u=D[lang].ui,sum=0;
+  var rows=Object.keys(PR).filter(function(k){return Q[k]}).map(function(k){sum+=Q[k]*PR[k];return '<div class="ol"><div><div class="k">'+esc(KO[k])+'</div><div class="f">'+esc(D[lang].nm[k])+'</div></div><div class="x">× '+Q[k]+'</div></div>'}).join('');
+  ov('<div style="background:#1f1b16;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:6px"><div style="font-size:20px;font-weight:900">직원 확인용 · 주문 내역</div><div style="font-size:13px;opacity:.8;margin-top:2px">'+esc(u.staff)+'</div></div>'+rows+'<div class="otot"><span>합계'+(lang?' · '+u.tot:'')+'</span><span>'+sum.toLocaleString('ko-KR')+'원</span></div>')};
+}
+render();
+</script></body></html>

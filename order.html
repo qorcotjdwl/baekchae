@@ -78,7 +78,7 @@ function bind(){
  document.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){var k=b.dataset.m;if(Q[k]){Q[k]--;if(!Q[k])delete Q[k]}render()}});
  document.getElementById('br').onclick=function(){Q={};render()};
  document.getElementById('bm').onclick=function(){var o=document.createElement('div');o.className='mrot';o.innerHTML='<img src="menu/menu_'+lang+'.jpg" alt=""><button>'+D[lang].ui.close+'</button>';document.body.appendChild(o);o.querySelector('button').onclick=function(){o.remove()}};
- document.getElementById('bh').onclick=function(){ov('<div class="hwimg"><img src="howto/how_stew_'+lang+'.jpg" alt=""><img src="howto/how_bbq_'+lang+'.jpg" alt=""></div>'+TRANS.map(function(x){return '<div class="hw"><div>'+esc(x[lang][0])+'</div></div>'}).join(''))};
+ document.getElementById('bh').onclick=function(){var t=function(n){return '<div class="hw"><div>'+esc(TRANS[n][lang][0])+'</div></div>'};ov('<div class="hwimg">'+t(0)+'<img src="howto/how_stew_'+lang+'.jpg" alt="">'+t(1)+'<img src="howto/how_bbq_'+lang+'.jpg" alt="" style="margin-top:16px">'+t(2)+'</div>')};
  var bs=document.getElementById('bs');if(bs)bs.onclick=cart;
 }
 function cart(){var u=D[lang].ui,d=D[lang],sum=0,cnt=0;

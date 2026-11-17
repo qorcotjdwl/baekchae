@@ -692,15 +692,16 @@ let dsQ='',dsOpen=new Set();const DSIMG={};let dsPend=null;
 async function dsLoadImg(id){DSIMG[id]=null;const it=(S.docs||{})[id]||{};const out=[];
   try{if(it.n){for(let i=0;i<it.n;i++){const g=await getDoc(doc(db,'settings',`dimg_${id}_${i}`));if(g.exists())out.push(g.data().data)}}
     else{const g=await getDoc(doc(db,'settings','dimg_'+id));if(g.exists())out.push(g.data().data)}}catch(e){}
-  DSIMG[id]=out;if(cat==='docs')render()}
+  DSIMG[id]=out;if(cat==='docs')dsRefresh()}
 const dsList=()=>Object.entries(S.docs||{}).map(([id,v])=>({id,...v})).sort((a,b)=>(a.title||'').localeCompare(b.title||'','ko'));
 const dsMark=(t,q)=>{const e=esc(t||'');if(!q)return e;const qq=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return e.replace(new RegExp(qq,'gi'),m=>`<mark>${m}</mark>`)};
-function renderDocs(){const L=dsList(),q=dsQ.trim(),ad=isAdmin();
+function renderDocs(){return `<div class="dssb"><span>⌕</span><input id="dsq" class="dsin" placeholder="찾을 단어 (예: 바리스타)" value="${esc(dsQ)}"><button id="dsx" style="${dsQ?'':'visibility:hidden'}">✕</button></div><div id="dsbody">${dsBody()}</div>`;}
+function dsBody(){const L=dsList(),q=dsQ.trim(),ad=isAdmin();
   const hit=q?L.filter(d=>((d.title||'')+' '+(d.body||'')).toLowerCase().includes(q.toLowerCase())):[];
   const item=(d,hitList)=>{const k=(hitList?'h:':'a:')+d.id,op=hitList?!dsOpen.has(k):dsOpen.has(k);
     let full='';if(op&&d.thumb){const f=DSIMG[d.id];if(f===undefined)dsLoadImg(d.id);full=f?`<div class="dsrow n${f.length}">${f.map((x,i)=>`<img class="dsfull" data-dsbig="${d.id}|${i}" src="${x}" alt="">`).join('')}</div>`:'<div class="dsfull wait">사진 불러오는 중…</div>'}
     return `<button class="dsr" data-dso="${k}"><span class="tt">${dsMark(d.title,q)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>${op?`<div class="dsb">${dsMark(d.body,q)}${full}${ad?`<div class="dsa"><button data-dse="${d.id}">고치기</button><button data-dsd="${d.id}">지우기</button></div>`:''}</div>`:''}`};
-  return `<div class="dssb"><span>⌕</span><input id="dsq" class="dsin" placeholder="찾을 단어 (예: 바리스타)" value="${esc(dsQ)}">${q?'<button id="dsx">✕</button>':''}</div>
+  return `
    ${q?`<div class="dsres">"${esc(q)}" 찾은 자료 ${hit.length}개${hit.length?' · 누르면 내용이 접혀요':''}</div>${hit.length?`<div class="dsl">${hit.map(d=>item(d,true)).join('')}</div>`:''}<div style="height:12px"></div>`:''}
    ${ad?'<button class="dsadd" id="dsadd">+ 자료 추가 (사장님만)</button>':''}
    <div class="dsres">전체 자료 ${L.length}개</div>
@@ -728,9 +729,12 @@ function dsEdit(id){const d=id?(S.docs||{})[id]:null;
       DSIMG[key]=photos.map(p=>p.full);
       await setDoc(doc(db,'settings','docs'),{items:{[key]:{title:t,body:b,at:new Date().toISOString(),n:photos.length,thumb:thumb||deleteField()}}},{merge:true});toast('저장했어요')}catch(e){fail(e)}};}
 function dsThumb(url){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,160/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.7))};im.onerror=()=>res(null);im.src=url})}
-function bindDocs(){const i=$('dsq');if(i)i.oninput=()=>{dsQ=i.value;const pos=i.selectionStart;render();const j=$('dsq');if(j){j.focus();try{j.setSelectionRange(pos,pos)}catch(e){}}};
-  const x=$('dsx');if(x)x.onclick=()=>{dsQ='';render()};
-  document.querySelectorAll('[data-dso]').forEach(b=>b.onclick=()=>{const k=b.dataset.dso;dsOpen.has(k)?dsOpen.delete(k):dsOpen.add(k);render()});
+function bindDocs(){const i=$('dsq');if(i)i.oninput=()=>{dsQ=i.value;$('dsbody').innerHTML=dsBody();$('dsx').style.visibility=dsQ?'':'hidden';bindDocsBody()};
+  const x=$('dsx');if(x)x.onclick=()=>{dsQ='';$('dsq').value='';$('dsbody').innerHTML=dsBody();x.style.visibility='hidden';bindDocsBody()};
+  bindDocsBody();}
+function dsRefresh(){const b=$('dsbody');if(b){b.innerHTML=dsBody();bindDocsBody()}else render()}
+function bindDocsBody(){
+  document.querySelectorAll('[data-dso]').forEach(b=>b.onclick=()=>{const k=b.dataset.dso;dsOpen.has(k)?dsOpen.delete(k):dsOpen.add(k);dsRefresh()});
   const a=$('dsadd');if(a)a.onclick=()=>dsEdit(null);
   document.querySelectorAll('[data-dse]').forEach(b=>b.onclick=()=>dsEdit(b.dataset.dse));
   document.querySelectorAll('[data-dsd]').forEach(b=>b.onclick=()=>{const d=(S.docs||{})[b.dataset.dsd];if(!d)return;
@@ -1157,7 +1161,7 @@ function render(){
   const body=tab==='day'?renderDay():tab==='month'?renderMonth():renderAdmin();
   // 입력 중인 글 보존
   const keep=$('hotext')?$('hotext').value:'';
-  if(document.activeElement&&(document.activeElement.tagName==='TEXTAREA'||document.activeElement.classList.contains('rpin')||document.activeElement.classList.contains('rvin')))return;
+  if(document.activeElement&&(document.activeElement.tagName==='TEXTAREA'||document.activeElement.classList.contains('rpin')||document.activeElement.classList.contains('rvin')||document.activeElement.id==='dsq'))return;
   if($('modal').classList.contains('show')&&document.activeElement&&$('sheet').contains(document.activeElement)) return; // 수정창 입력 중엔 화면 유지
   $('app').innerHTML=paper?body:`<header><div class="brand">백채 근무일지<small>성지길점</small></div><button class="me" id="logout">${esc(me.name)} · 나가기</button></header><div class="wrap">${body}</div>`;
   if($('hotext'))$('hotext').value=keep;

@@ -235,6 +235,17 @@ body.paper-on .app{padding-bottom:0}
 .wktag{font-size:11px;border:1.5px solid var(--ink);border-radius:10px;padding:0 7px;margin-left:6px;font-weight:700;vertical-align:middle}
 .wknote{font-size:12px;color:var(--sub);background:var(--bg);border-radius:8px;padding:7px 10px;margin-top:8px}
 .wksw{width:46px;height:26px;border-radius:13px;background:#d6cec3;border:none;position:relative;flex:none;padding:0}.wksw:after{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}.wksw.on{background:var(--ink)}.wksw.on:after{left:23px}
+.dssb{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:4px 12px;margin-bottom:10px;font-size:18px}.dssb button{border:none;background:none;color:var(--sub);font-size:18px;padding:6px}
+.dsin{flex:1;min-width:0;border:none;outline:none;font-size:16px;padding:10px 0;font-family:inherit;background:transparent}
+.dsres{font-size:13px;color:var(--sub);margin:4px 4px 8px}
+.dsl{background:#fff;border-radius:14px;padding:0 14px}
+.dsr{display:flex;width:100%;justify-content:space-between;align-items:center;border:none;border-bottom:1px solid var(--line);background:none;padding:14px 0;font-size:16px;font-weight:800;color:var(--ink);font-family:inherit;text-align:left}.dsr .ar{color:var(--sub);font-weight:400}
+.dsb{padding:10px 0 14px;border-bottom:1px solid var(--line);font-size:15px;line-height:1.6;white-space:pre-wrap}
+.dsl>*:last-child{border-bottom:none}
+.dsa{display:flex;gap:14px;justify-content:flex-end;margin-top:8px}.dsa button{border:none;background:none;color:var(--sub);font-size:13px;font-family:inherit}
+mark{background:var(--ink);color:#fff;border-radius:3px;padding:0 2px}
+.dsadd{width:100%;border:2px dashed var(--ink);background:none;border-radius:14px;padding:12px;font-weight:800;font-size:15px;color:var(--ink);margin-bottom:10px;font-family:inherit}
+.dsin2{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:15px;font-family:inherit;margin-bottom:8px}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -461,6 +472,7 @@ async function logout(){
 function enter(id){
   screen='app';booted=true;
   myId=id;me=S.users.find(x=>x.id===id);ready=false;
+  unsubs.push(onSnapshot(doc(db,'settings','docs'),s=>{S.docs=s.exists()?(s.data().items||{}):{};render()},()=>{}));
   unsubs.push(onSnapshot(doc(db,'settings','main'),s=>{if(s.exists())Object.assign(S.settings,s.data());
     if(!ready){ready=true;viewDate=bizDate(new Date());tab='day';detail=false;cat=null;lastBiz=viewDate;}
     ensureMonth();render();},fail));
@@ -663,6 +675,34 @@ function bindRsv(day){const f=rsvF,keep=()=>{const a=$('rvtel'),b=$('rvmemo'),c=
   document.querySelectorAll('[data-rvd]').forEach(b=>b.onclick=()=>{const r=rsvOf(day).find(x=>x.id===b.dataset.rvd);if(!r)return;
     openSheet(`<h2>예약 지우기</h2><div class="t" style="margin-bottom:14px">${esc(r.t)} · ${esc(r.n)}명${r.tel?' · '+esc(r.tel):''}<br>이 예약을 지울까요?</div><div class="inline"><button class="btn ghost" id="rdc">취소</button><button class="btn red" id="rdo">지우기</button></div>`);
     $('rdc').onclick=closeSheet;$('rdo').onclick=()=>{closeSheet();document.activeElement&&document.activeElement.blur();setDoc(dayRef(),{tasks:{[r.id]:deleteField()}},{merge:true}).then(()=>{toast('예약을 지웠어요');render()}).catch(fail)};});}
+
+/* ===== 자료 검색 (settings/docs — 사장님만 쓰기, 직원은 보기) ===== */
+let dsQ='',dsOpen=new Set();
+const dsList=()=>Object.entries(S.docs||{}).map(([id,v])=>({id,...v})).sort((a,b)=>(a.title||'').localeCompare(b.title||'','ko'));
+const dsMark=(t,q)=>{const e=esc(t||'');if(!q)return e;const qq=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return e.replace(new RegExp(qq,'gi'),m=>`<mark>${m}</mark>`)};
+function renderDocs(){const L=dsList(),q=dsQ.trim(),ad=isAdmin();
+  const hit=q?L.filter(d=>((d.title||'')+' '+(d.body||'')).toLowerCase().includes(q.toLowerCase())):[];
+  const item=(d,hitList)=>{const k=(hitList?'h:':'a:')+d.id,op=hitList?!dsOpen.has(k):dsOpen.has(k);return `<button class="dsr" data-dso="${k}"><span>${dsMark(d.title,q)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>${op?`<div class="dsb">${dsMark(d.body,q)}${ad?`<div class="dsa"><button data-dse="${d.id}">고치기</button><button data-dsd="${d.id}">지우기</button></div>`:''}</div>`:''}`};
+  return `<div class="dssb"><span>⌕</span><input id="dsq" class="dsin" placeholder="찾을 단어 (예: 바리스타)" value="${esc(dsQ)}">${q?'<button id="dsx">✕</button>':''}</div>
+   ${q?`<div class="dsres">"${esc(q)}" 찾은 자료 ${hit.length}개${hit.length?' · 누르면 내용이 접혀요':''}</div>${hit.length?`<div class="dsl">${hit.map(d=>item(d,true)).join('')}</div>`:''}<div style="height:12px"></div>`:''}
+   ${ad?'<button class="dsadd" id="dsadd">+ 자료 추가 (사장님만)</button>':''}
+   <div class="dsres">전체 자료 ${L.length}개</div>
+   ${L.length?`<div class="dsl">${L.map(d=>item(d,false)).join('')}</div>`:'<div class="t" style="text-align:center;color:var(--sub);margin:16px 0">아직 자료가 없어요</div>'}`;}
+function dsEdit(id){const d=id?(S.docs||{})[id]:null;
+  openSheet(`<h2>${d?'자료 고치기':'자료 추가'}</h2><input id="dst" class="dsin2" placeholder="제목 (예: 커피)" value="${esc(d?d.title:'')}"><textarea id="dsbd" placeholder="내용 (예: 엄보라 바리스타 스페셜티 블렌딩 원두)" style="min-height:140px">${esc(d?d.body:'')}</textarea>
+   <div class="inline" style="margin-top:12px"><button class="btn ghost" id="dsc">취소</button><button class="btn" id="dss">저장</button></div>`);
+  $('dsc').onclick=closeSheet;
+  $('dss').onclick=()=>{const t=$('dst').value.trim(),b=$('dsbd').value.trim();if(!t){toast('제목을 넣어 주세요');return}
+    const key=id||('d'+Date.now().toString(36));closeSheet();
+    setDoc(doc(db,'settings','docs'),{items:{[key]:{title:t,body:b,at:new Date().toISOString()}}},{merge:true}).then(()=>toast('저장했어요')).catch(fail)};}
+function bindDocs(){const i=$('dsq');if(i)i.oninput=()=>{dsQ=i.value;const pos=i.selectionStart;render();const j=$('dsq');if(j){j.focus();try{j.setSelectionRange(pos,pos)}catch(e){}}};
+  const x=$('dsx');if(x)x.onclick=()=>{dsQ='';render()};
+  document.querySelectorAll('[data-dso]').forEach(b=>b.onclick=()=>{const k=b.dataset.dso;dsOpen.has(k)?dsOpen.delete(k):dsOpen.add(k);render()});
+  const a=$('dsadd');if(a)a.onclick=()=>dsEdit(null);
+  document.querySelectorAll('[data-dse]').forEach(b=>b.onclick=()=>dsEdit(b.dataset.dse));
+  document.querySelectorAll('[data-dsd]').forEach(b=>b.onclick=()=>{const d=(S.docs||{})[b.dataset.dsd];if(!d)return;
+    openSheet(`<h2>자료 지우기</h2><div class="t" style="margin-bottom:14px">"${esc(d.title)}" 자료를 지울까요?</div><div class="inline"><button class="btn ghost" id="ddc">취소</button><button class="btn red" id="ddo">지우기</button></div>`);
+    $('ddc').onclick=closeSheet;$('ddo').onclick=()=>{const id=b.dataset.dsd;closeSheet();setDoc(doc(db,'settings','docs'),{items:{[id]:deleteField()}},{merge:true}).then(()=>toast('지웠어요')).catch(fail)}});}
 /* ===== 오늘(일) 화면 ===== */
 function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   return `<div class="ho">${h.item?`<div class="tag">${esc(itemName(h.item))}</div>`:''}<div class="meta"><span><b>${esc(uname(h.by))}</b> · ${hm(h.at)}</span>${h.edits.length?`<span>수정됨 · ${esc(uname(h.edits[h.edits.length-1].by))}</span>`:''}</div>
@@ -756,10 +796,10 @@ function renderDay(){
   const around=hosAround(viewDate), unseen=unseenOf(around).length;
   if(cat){
     if(cat==='ho') return renderPaper(d,dow,hosAround(viewDate));
-    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소',rpt:'마감 보고',rsv:'예약'};
+    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소',rpt:'마감 보고',rsv:'예약',docs:'자료 검색'};
     return `<button class="back" id="back">‹ ${d.getMonth()+1}월 ${d.getDate()}일 목록으로</button>
     <h2 class="sech">${titles[cat]}</h2><div class="t" style="color:var(--sub);font-size:13px">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div style="height:10px"></div>
-    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:cat==='rpt'?renderReport(viewDate):cat==='rsv'?renderRsv(viewDate):secClean}`;
+    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:cat==='rpt'?renderReport(viewDate):cat==='rsv'?renderRsv(viewDate):cat==='docs'?renderDocs():secClean}`;
   }
   // ── 두 번째 화면 (시안 C-3) ──
   const pm=punchMsg&&punchMsg.until>Date.now()?punchMsg:null;
@@ -789,6 +829,7 @@ function renderDay(){
     ${rowHtml('ho','인수인계',around.length?badge(unseen,'확인 완료'):'<span class="done-t">없음</span>')}
     ${rowHtml('clean','청소',badge(left(TASKS)))}
     ${(()=>{const n=rsvOf(viewDate).length;return rowHtml('rsv','예약',n?`<span class="cnt-b">${n}</span>`:'<span class="done-t">없음</span>')})()}
+    ${rowHtml('docs','자료 검색',`<span class="done-t">${dsList().length}개</span>`)}
     ${REPORT_ON?rowHtml('rpt','마감 보고','<span class="done-t">카톡 양식 · 시험 중</span>'):''}
   </div>
   <div class="wcard"><div class="wh">${isToday?'오늘':'이날'} 근무자</div>${who||'<div class="wrow wait"><span class="wn">이날 근무표가 없어요</span></div>'}</div>`;
@@ -804,6 +845,7 @@ function bindDay(){
   const po=$('pout');if(po)po.onclick=()=>checkOut();
   if(cat==='rpt')bindReport(viewDate);
   if(cat==='rsv')bindRsv(viewDate);
+  if(cat==='docs')bindDocs();
   document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.task,cur=(S.tasks[viewDate]||{})[id];
     if(cur){ if(cur.uid!==myId&&!isAdmin()){toast(uname(cur.uid)+'님이 체크한 항목이에요');return}

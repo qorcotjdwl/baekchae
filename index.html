@@ -253,6 +253,10 @@ mark{background:var(--ink);color:#fff;border-radius:3px;padding:0 2px}
 .dsfull.wait{background:var(--bg);color:var(--sub);font-size:13px;padding:30px 0;text-align:center;border-style:dashed}
 .dsph{display:flex;gap:8px;align-items:flex-start;margin-top:6px}.dspv{width:96px;height:96px;object-fit:cover;border-radius:12px;border:1.5px solid var(--ink);display:block}
 .dscam{flex:1;border:2px dashed #b3aa9e;border-radius:12px;height:96px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:14px;position:relative;text-align:center}.dscam input{position:absolute;inset:0;opacity:0}
+.dsrow{display:grid;gap:6px;margin-top:10px}.dsrow.n1{grid-template-columns:1fr}.dsrow.n2{grid-template-columns:1fr 1fr}.dsrow.n3,.dsrow.n4,.dsrow.n5{grid-template-columns:1fr 1fr 1fr}
+.dsrow .dsfull{margin-top:0}.dsrow.n2 .dsfull,.dsrow.n3 .dsfull,.dsrow.n4 .dsfull,.dsrow.n5 .dsfull{height:130px;object-fit:cover}
+.dspvw{display:flex;gap:6px;flex-wrap:wrap}.dspw{position:relative}.dspw .dspv{width:84px;height:84px}.dspw button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:12px;padding:0}
+.dsph .dscam{height:84px;font-size:13px}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -685,35 +689,45 @@ function bindRsv(day){const f=rsvF,keep=()=>{const a=$('rvtel'),b=$('rvmemo'),c=
 
 /* ===== 자료 검색 (settings/docs — 사장님만 쓰기, 직원은 보기) ===== */
 let dsQ='',dsOpen=new Set();const DSIMG={};let dsPend=null;
-async function dsLoadImg(id){DSIMG[id]=null;try{const g=await getDoc(doc(db,'settings','dimg_'+id));DSIMG[id]=g.exists()?g.data().data:false}catch(e){DSIMG[id]=false}if(cat==='docs')render()}
+async function dsLoadImg(id){DSIMG[id]=null;const it=(S.docs||{})[id]||{};const out=[];
+  try{if(it.n){for(let i=0;i<it.n;i++){const g=await getDoc(doc(db,'settings',`dimg_${id}_${i}`));if(g.exists())out.push(g.data().data)}}
+    else{const g=await getDoc(doc(db,'settings','dimg_'+id));if(g.exists())out.push(g.data().data)}}catch(e){}
+  DSIMG[id]=out;if(cat==='docs')render()}
 const dsList=()=>Object.entries(S.docs||{}).map(([id,v])=>({id,...v})).sort((a,b)=>(a.title||'').localeCompare(b.title||'','ko'));
 const dsMark=(t,q)=>{const e=esc(t||'');if(!q)return e;const qq=esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return e.replace(new RegExp(qq,'gi'),m=>`<mark>${m}</mark>`)};
 function renderDocs(){const L=dsList(),q=dsQ.trim(),ad=isAdmin();
   const hit=q?L.filter(d=>((d.title||'')+' '+(d.body||'')).toLowerCase().includes(q.toLowerCase())):[];
   const item=(d,hitList)=>{const k=(hitList?'h:':'a:')+d.id,op=hitList?!dsOpen.has(k):dsOpen.has(k);
-    const th=d.thumb?`<img class="dsth" src="${d.thumb}" alt="">`:'<span class="dsth none">없음</span>';
-    let full='';if(op&&d.thumb){const f=DSIMG[d.id];if(f===undefined)dsLoadImg(d.id);full=f?`<img class="dsfull" data-dsbig="${d.id}" src="${f}" alt="">`:'<div class="dsfull wait">사진 불러오는 중…</div>'}
-    return `<button class="dsr" data-dso="${k}">${th}<span class="tt">${dsMark(d.title,q)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>${op?`<div class="dsb">${dsMark(d.body,q)}${full}${ad?`<div class="dsa"><button data-dse="${d.id}">고치기</button><button data-dsd="${d.id}">지우기</button></div>`:''}</div>`:''}`};
+    let full='';if(op&&d.thumb){const f=DSIMG[d.id];if(f===undefined)dsLoadImg(d.id);full=f?`<div class="dsrow n${f.length}">${f.map((x,i)=>`<img class="dsfull" data-dsbig="${d.id}|${i}" src="${x}" alt="">`).join('')}</div>`:'<div class="dsfull wait">사진 불러오는 중…</div>'}
+    return `<button class="dsr" data-dso="${k}"><span class="tt">${dsMark(d.title,q)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>${op?`<div class="dsb">${dsMark(d.body,q)}${full}${ad?`<div class="dsa"><button data-dse="${d.id}">고치기</button><button data-dsd="${d.id}">지우기</button></div>`:''}</div>`:''}`};
   return `<div class="dssb"><span>⌕</span><input id="dsq" class="dsin" placeholder="찾을 단어 (예: 바리스타)" value="${esc(dsQ)}">${q?'<button id="dsx">✕</button>':''}</div>
    ${q?`<div class="dsres">"${esc(q)}" 찾은 자료 ${hit.length}개${hit.length?' · 누르면 내용이 접혀요':''}</div>${hit.length?`<div class="dsl">${hit.map(d=>item(d,true)).join('')}</div>`:''}<div style="height:12px"></div>`:''}
    ${ad?'<button class="dsadd" id="dsadd">+ 자료 추가 (사장님만)</button>':''}
    <div class="dsres">전체 자료 ${L.length}개</div>
    ${L.length?`<div class="dsl">${L.map(d=>item(d,false)).join('')}</div>`:'<div class="t" style="text-align:center;color:var(--sub);margin:16px 0">아직 자료가 없어요</div>'}`;}
-function dsEdit(id){const d=id?(S.docs||{})[id]:null;dsPend=null;
-  const box=()=>{const src=dsPend?dsPend.thumb:(dsPend===false?null:(d&&d.thumb));return src?`<img class="dspv" src="${src}" alt=""><button class="btn sm ghost" id="dsrm" style="margin-top:6px">사진 빼기</button>`:''};
-  openSheet(`<h2>${d?'자료 고치기':'자료 추가'}</h2><input id="dst" class="dsin2" placeholder="제목 (예: 커피)" value="${esc(d?d.title:'')}"><textarea id="dsbd" placeholder="내용 (예: 엄보라 바리스타 스페셜티 블렌딩 원두)" style="min-height:120px">${esc(d?d.body:'')}</textarea>
-   <div class="dsph"><div id="dspvw">${box()}</div><label class="dscam">+ 사진 추가 (찍기 · 앨범)<input type="file" accept="image/*" id="dsfile"></label></div>
+function dsEdit(id){const d=id?(S.docs||{})[id]:null;
+  let P=[];let ready=!(d&&d.thumb);
+  const draw=()=>{$('dspvw').innerHTML=(ready?'':'<div class="t">사진 불러오는 중…</div>')+P.map((p,i)=>`<div class="dspw"><img class="dspv" src="${p.full}" alt=""><button data-dsrm="${i}">✕</button></div>`).join('');
+    $('dscamw').style.display=ready&&P.length<5?'':'none';$('dscnt').textContent=`사진 ${P.length}/5`;
+    document.querySelectorAll('[data-dsrm]').forEach(b=>b.onclick=()=>{P.splice(+b.dataset.dsrm,1);draw()})};
+  openSheet(`<h2>${d?'자료 고치기':'자료 추가'}</h2><input id="dst" class="dsin2" placeholder="제목 (예: 커피)" value="${esc(d?d.title:'')}"><textarea id="dsbd" placeholder="내용 (예: 엄보라 바리스타 스페셜티 블렌딩 원두)" style="min-height:110px">${esc(d?d.body:'')}</textarea>
+   <div class="t" id="dscnt" style="font-size:12px;color:var(--sub);margin:4px 0">사진 0/5</div>
+   <div class="dsph"><div id="dspvw" class="dspvw"></div><label class="dscam" id="dscamw">+ 사진 추가<br>(찍기 · 앨범)<input type="file" accept="image/*" multiple id="dsfile"></label></div>
    <div class="inline" style="margin-top:12px"><button class="btn ghost" id="dsc">취소</button><button class="btn" id="dss">저장</button></div>`);
-  const bindRm=()=>{const r=$('dsrm');if(r)r.onclick=()=>{dsPend=false;$('dspvw').innerHTML=box();bindRm()}};bindRm();
-  $('dsfile').onchange=async()=>{const f=$('dsfile').files[0];if(!f)return;toast('사진 줄이는 중…');
-    try{dsPend={full:await shrink(f,1280),thumb:await shrink(f,160)};$('dspvw').innerHTML=box();bindRm()}catch(e){fail(e)}};
+  draw();
+  if(!ready){(async()=>{if(DSIMG[id]==null)await dsLoadImg(id);(DSIMG[id]||[]).forEach(f=>P.push({full:f,old:true}));ready=true;if($('dspvw'))draw()})()}
+  $('dsfile').onchange=async()=>{const fs=[...$('dsfile').files].slice(0,5-P.length);if(!fs.length)return;toast('사진 줄이는 중…');
+    try{for(const f of fs){P.push({full:await shrink(f,1280),thumb:await shrink(f,160)})}draw()}catch(e){fail(e)}};
   $('dsc').onclick=closeSheet;
-  $('dss').onclick=async()=>{const t=$('dst').value.trim(),b=$('dsbd').value.trim();if(!t){toast('제목을 넣어 주세요');return}
-    const key=id||('d'+Date.now().toString(36)),pend=dsPend;closeSheet();
-    try{const it={title:t,body:b,at:new Date().toISOString()};
-      if(pend){await setDoc(doc(db,'settings','dimg_'+key),{data:pend.full});DSIMG[key]=pend.full;it.thumb=pend.thumb}
-      else if(pend===false){it.thumb=deleteField();deleteDoc(doc(db,'settings','dimg_'+key)).catch(()=>{});delete DSIMG[key]}
-      await setDoc(doc(db,'settings','docs'),{items:{[key]:it}},{merge:true});toast('저장했어요')}catch(e){fail(e)}};}
+  $('dss').onclick=async()=>{if(!ready){toast('사진을 불러오는 중이에요');return}const t=$('dst').value.trim(),b=$('dsbd').value.trim();if(!t){toast('제목을 넣어 주세요');return}
+    const key=id||('d'+Date.now().toString(36)),photos=P.slice();closeSheet();toast('저장하는 중…');
+    try{for(let i=0;i<photos.length;i++)await setDoc(doc(db,'settings',`dimg_${key}_${i}`),{data:photos[i].full});
+      for(let i=photos.length;i<5;i++)deleteDoc(doc(db,'settings',`dimg_${key}_${i}`)).catch(()=>{});
+      deleteDoc(doc(db,'settings','dimg_'+key)).catch(()=>{});
+      let thumb=null;if(photos[0])thumb=photos[0].thumb||await dsThumb(photos[0].full);
+      DSIMG[key]=photos.map(p=>p.full);
+      await setDoc(doc(db,'settings','docs'),{items:{[key]:{title:t,body:b,at:new Date().toISOString(),n:photos.length,thumb:thumb||deleteField()}}},{merge:true});toast('저장했어요')}catch(e){fail(e)}};}
+function dsThumb(url){return new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,160/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.7))};im.onerror=()=>res(null);im.src=url})}
 function bindDocs(){const i=$('dsq');if(i)i.oninput=()=>{dsQ=i.value;const pos=i.selectionStart;render();const j=$('dsq');if(j){j.focus();try{j.setSelectionRange(pos,pos)}catch(e){}}};
   const x=$('dsx');if(x)x.onclick=()=>{dsQ='';render()};
   document.querySelectorAll('[data-dso]').forEach(b=>b.onclick=()=>{const k=b.dataset.dso;dsOpen.has(k)?dsOpen.delete(k):dsOpen.add(k);render()});
@@ -721,8 +735,8 @@ function bindDocs(){const i=$('dsq');if(i)i.oninput=()=>{dsQ=i.value;const pos=i
   document.querySelectorAll('[data-dse]').forEach(b=>b.onclick=()=>dsEdit(b.dataset.dse));
   document.querySelectorAll('[data-dsd]').forEach(b=>b.onclick=()=>{const d=(S.docs||{})[b.dataset.dsd];if(!d)return;
     openSheet(`<h2>자료 지우기</h2><div class="t" style="margin-bottom:14px">"${esc(d.title)}" 자료를 지울까요?</div><div class="inline"><button class="btn ghost" id="ddc">취소</button><button class="btn red" id="ddo">지우기</button></div>`);
-    $('ddc').onclick=closeSheet;$('ddo').onclick=()=>{const id=b.dataset.dsd;closeSheet();if(d.thumb)deleteDoc(doc(db,'settings','dimg_'+id)).catch(()=>{});setDoc(doc(db,'settings','docs'),{items:{[id]:deleteField()}},{merge:true}).then(()=>toast('지웠어요')).catch(fail)}});
-  document.querySelectorAll('[data-dsbig]').forEach(im=>im.onclick=()=>{openSheet(`<img class="big" src="${DSIMG[im.dataset.dsbig]}" alt="" style="width:100%"><button class="btn ghost full" id="dbc" style="margin-top:10px">닫기</button>`);$('dbc').onclick=closeSheet});}
+    $('ddc').onclick=closeSheet;$('ddo').onclick=()=>{const id=b.dataset.dsd;closeSheet();[0,1,2,3,4].forEach(i=>deleteDoc(doc(db,'settings',`dimg_${id}_${i}`)).catch(()=>{}));deleteDoc(doc(db,'settings','dimg_'+id)).catch(()=>{});setDoc(doc(db,'settings','docs'),{items:{[id]:deleteField()}},{merge:true}).then(()=>toast('지웠어요')).catch(fail)}});
+  document.querySelectorAll('[data-dsbig]').forEach(im=>im.onclick=()=>{const [bid,bi]=im.dataset.dsbig.split('|');openSheet(`<img class="big" src="${(DSIMG[bid]||[])[+bi||0]}" alt="" style="width:100%"><button class="btn ghost full" id="dbc" style="margin-top:10px">닫기</button>`);$('dbc').onclick=closeSheet});}
 /* ===== 오늘(일) 화면 ===== */
 function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   return `<div class="ho">${h.item?`<div class="tag">${esc(itemName(h.item))}</div>`:''}<div class="meta"><span><b>${esc(uname(h.by))}</b> · ${hm(h.at)}</span>${h.edits.length?`<span>수정됨 · ${esc(uname(h.edits[h.edits.length-1].by))}</span>`:''}</div>

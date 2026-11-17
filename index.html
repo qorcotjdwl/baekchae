@@ -793,7 +793,7 @@ function renderTrans(){const lname=Object.fromEntries(TR_LANGS)[trLang];
   <div class="t" style="font-size:12px;color:var(--sub);text-align:center;margin-top:10px">${lname} 문장 ${TRANS.length}개 · 문장 추가는 사장님이 Claude에게 보내주시면 넣어요</div>`;}
 function bindTrans(){
   const hb=$('trhow');if(hb)hb.onclick=()=>{const o=document.createElement('div');o.className='trbig';
-    const tx=n=>`<div class="trhwt">${esc(TRANS[n][trLang][0])}</div>`;o.innerHTML=`<div class="trbig-in">${tx(0)}<img class="trhw" src="howto/how_stew_${trLang}.jpg" alt="" style="margin-top:14px">${tx(1)}<img class="trhw" src="howto/how_bbq_${trLang}.jpg" alt="" style="margin-top:14px">${tx(2)}<button class="trbig-x">닫기</button></div>`;
+    const tx=n=>`<div class="trhwt">${esc(TRANS[n][trLang][0])}</div>`;o.innerHTML=`<div class="trbig-in"><img class="trhw" src="howto/how_stew_${trLang}.jpg" alt="">${tx(1)}<img class="trhw" src="howto/how_bbq_${trLang}.jpg" alt="" style="margin-top:14px">${tx(2)}${tx(0)}<button class="trbig-x">닫기</button></div>`;
     document.body.appendChild(o);o.querySelector('.trbig-x').onclick=()=>o.remove();};
   const mb=$('trmenu');if(mb)mb.onclick=()=>{const o=document.createElement('div');o.className='mrot';o.innerHTML=`<img src="menu/menu_${trLang}.jpg" alt="menu" id="trmimg"><button>닫기</button>`;document.body.appendChild(o);o.querySelector('button').onclick=()=>o.remove();};
   document.querySelectorAll('[data-trl]').forEach(b=>b.onclick=()=>{trLang=b.dataset.trl;render()});

@@ -257,6 +257,18 @@ mark{background:var(--ink);color:#fff;border-radius:3px;padding:0 2px}
 .dsrow .dsfull{margin-top:0}.dsrow.n2 .dsfull,.dsrow.n3 .dsfull,.dsrow.n4 .dsfull,.dsrow.n5 .dsfull{height:130px;object-fit:cover}
 .dspvw{display:flex;gap:6px;flex-wrap:wrap}.dspw{position:relative}.dspw .dspv{width:84px;height:84px}.dspw button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:12px;padding:0}
 .dsph .dscam{height:84px;font-size:13px}
+.trseg button{font-size:14px;padding:10px 0}
+.trnote{font-size:12px;color:var(--sub);background:#fff;border:1.5px dashed var(--ink);border-radius:10px;padding:8px 10px;margin-bottom:10px;line-height:1.5}
+.trfx{font-size:18px;line-height:1.6;white-space:pre-wrap;font-weight:600}
+.trpr,.trko{font-size:13px;color:var(--sub);margin-top:10px;line-height:1.55;white-space:pre-wrap}.trpr b,.trko b{color:var(--ink);margin-right:4px}
+.trbig{position:fixed;inset:0;z-index:80;background:#fff;overflow:auto}.trbig-in{min-height:100%;box-sizing:border-box;padding:40px 22px 24px;display:flex;flex-direction:column;max-width:600px;margin:0 auto}
+.trbig-tx{font-size:28px;line-height:1.55;font-weight:700;white-space:pre-wrap;flex:1}
+.trbig-x{margin-top:24px;border:2px solid var(--ink);background:#fff;border-radius:14px;padding:14px;font-size:17px;font-weight:800;font-family:inherit;color:var(--ink)}
+.hopop-b.hlred{border:3px solid #d32f2f}.hlred .t2{color:#d32f2f}
+.hlli{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;background:#f4f1ec;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:14px}
+.hlli span{flex:1;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.hlli small{display:block;color:var(--sub);font-size:12px}
+.hlli button{border:1.5px solid var(--ink);border-radius:14px;padding:4px 10px;font-size:13px;white-space:nowrap;background:#fff;color:var(--ink);font-family:inherit}
+.hlred .go{margin-top:6px}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -741,6 +753,53 @@ function bindDocsBody(){
     openSheet(`<h2>자료 지우기</h2><div class="t" style="margin-bottom:14px">"${esc(d.title)}" 자료를 지울까요?</div><div class="inline"><button class="btn ghost" id="ddc">취소</button><button class="btn red" id="ddo">지우기</button></div>`);
     $('ddc').onclick=closeSheet;$('ddo').onclick=()=>{const id=b.dataset.dsd;closeSheet();[0,1,2,3,4].forEach(i=>deleteDoc(doc(db,'settings',`dimg_${id}_${i}`)).catch(()=>{}));deleteDoc(doc(db,'settings','dimg_'+id)).catch(()=>{});setDoc(doc(db,'settings','docs'),{items:{[id]:deleteField()}},{merge:true}).then(()=>toast('지웠어요')).catch(fail)}});
   document.querySelectorAll('[data-dsbig]').forEach(im=>im.onclick=()=>{const [bid,bi]=im.dataset.dsbig.split('|');openSheet(`<img class="big" src="${(DSIMG[bid]||[])[+bi||0]}" alt="" style="width:100%"><button class="btn ghost full" id="dbc" style="margin-top:10px">닫기</button>`);$('dbc').onclick=closeSheet});}
+
+/* ===== 번역 (문장은 trans.js 에 — 사장님이 보내주면 Claude가 추가) ===== */
+const TR_LANGS=[['en','영어'],['zh','중국어'],['ja','일본어'],['th','태국어']];
+const TRANS=[
+{t:'메뉴 안내와 주문',ko:'저희 메뉴는 김치찌개와 한국식 고기구이입니다. 메뉴판 보시고 주문하실 때 말씀해 주세요.',
+ en:['Our menu has kimchi stew and Korean-style grilled meat.\nPlease take a look at the menu and let us know when you\'re ready to order.','아워 메뉴 해즈 김치 스튜 앤 코리안 스타일 그릴드 미트. 플리즈 테이크 어 룩 앳 더 메뉴 앤 렛 어스 노우 웬 유어 레디 투 오더.'],
+ zh:['我们的菜单有泡菜汤和韩式烤肉。\n请您看一下菜单，准备好点餐时告诉我们。','워먼 더 차이딴 여우 파오차이탕 허 한스 카오러우. 칭 닌 칸 이샤 차이딴, 준뻬이 하오 디엔찬 스 까오쑤 워먼.'],
+ ja:['当店のメニューはキムチチゲと韓国式焼肉です。\nメニューをご覧になって、ご注文がお決まりになりましたらお声がけください。','토-텐노 메뉴-와 기무치 치게토 칸코쿠시키 야키니쿠데스. 메뉴-오 고란니 낫테, 고추-몬가 오키마리니 나리마시타라 오코에가케 쿠다사이.'],
+ th:['ร้านเรามีเมนูซุปกิมจิและบาร์บีคิวเกาหลีค่ะ\nดูเมนูแล้ว ถ้าพร้อมสั่งอาหาร เรียกพนักงานได้เลยนะคะ','란 라오 미- 메-누- 쑵 낌찌 래 바-비-키우 까올리- 카. 두- 메-누- 래-우, 타- 프롬 쌍 아-한, 리-악 파낙응안 다이 러-이 나카.']},
+{t:'김치찌개 먹는 법',ko:'먼저 찌개 밑에 있는 고기를 잘라 주시고, 3~4분 더 끓여 드시면 됩니다. 밥과 국물이 더 필요하시면 말씀해 주세요. 맛있게 드세요.',
+ en:['How to enjoy kimchi stew\nFirst, cut the meat at the bottom of the stew, then let it boil for 3–4 more minutes.\nIf you\'d like more rice or broth, just let us know. Enjoy your meal!','하우 투 인조이 김치 스튜. 퍼스트, 컷 더 미트 앳 더 바텀 오브 더 스튜, 덴 렛 잇 보일 포 쓰리 투 포 모어 미닛츠. 이프 유드 라이크 모어 라이스 오어 브로스, 저스트 렛 어스 노우. 인조이 유어 밀!'],
+ zh:['泡菜汤的吃法\n请先把锅底的肉剪开，再煮3到4分钟就可以吃了。\n如果需要加米饭或汤，请告诉我们。祝您用餐愉快！','파오차이탕 더 츠파. 칭 시엔 바 궈디 더 러우 지엔카이, 짜이 주 싼 따오 쓰 펀중 지우 커이 츠 러. 루궈 쉬야오 지아 미판 훠 탕, 칭 까오쑤 워먼. 주 닌 용찬 위콰이!'],
+ ja:['キムチチゲの食べ方\nまず鍋の底にあるお肉を切ってから、さらに3〜4分ほど煮込んでお召し上がりください。\nご飯やスープのおかわりが必要でしたら、お気軽にお声がけください。どうぞごゆっくりお召し上がりください。','기무치 치게노 타베카타. 마즈 나베노 소코니 아루 오니쿠오 킷테카라, 사라니 산 욘푼호도 니콘데 오메시아가리 쿠다사이. 고항야 스-프노 오카와리가 히쓰요-데시타라, 오키가루니 오코에가케 쿠다사이. 도-조 고윳쿠리 오메시아가리 쿠다사이.'],
+ th:['วิธีทานซุปกิมจิ\nก่อนอื่น ตัดเนื้อที่อยู่ก้นหม้อก่อน แล้วต้มต่ออีก 3–4 นาที ก็ทานได้เลยค่ะ\nถ้าต้องการข้าวหรือน้ำซุปเพิ่ม บอกพนักงานได้เลยนะคะ ขอให้อร่อยนะคะ','위티- 탄 쑵 낌찌. 껀 은, 땃 느-아 티- 유- 꼰 머- 껀, 래-우 똠 떠- 익 쌈 씨- 나-티-, 꺼 탄 다이 러-이 카. 타- 떵깐 카-우 르- 남쑵 프-암, 버-억 파낙응안 다이 러-이 나카. 커- 하이 아로-이 나카.']},
+{t:'고기구이 먹는 법',ko:'불판이 달궈지면 고기를 구워 주세요. 김치, 두부, 꽈리고추도 아래쪽에 같이 구워 주세요.\n* 불판은 가운데 화력이 가장 세니, 가운데서 익히다가 익은 고기는 위쪽으로 옮겨 주세요.\n* 첫 점은 소금만 찍어 드시는 것을 추천해요. 두 번째부터는 구운 김치, 쌈장, 쌈, 파채 등 취향에 맞게 드세요. 맛있게 드세요.',
+ en:['How to enjoy Korean BBQ\nOnce the grill is hot, start grilling the meat.\nGrill the kimchi, tofu, and shishito peppers together on the lower part of the grill.\n* The center of the grill is the hottest. Cook the meat in the center, then move cooked pieces to the top.\n* We recommend the first bite with just salt. After that, enjoy it your way with grilled kimchi, ssamjang (dipping sauce), lettuce wraps, or green onion salad.\nEnjoy your meal!','하우 투 인조이 코리안 비비큐. 원스 더 그릴 이즈 핫, 스타트 그릴링 더 미트. 그릴 더 김치, 토푸, 앤 시시토 페퍼스 투게더 온 더 로워 파트 오브 더 그릴. 더 센터 오브 더 그릴 이즈 더 핫티스트. 쿡 더 미트 인 더 센터, 덴 무브 쿡트 피시스 투 더 탑. 위 레커멘드 더 퍼스트 바이트 위드 저스트 솔트. 애프터 댓, 인조이 잇 유어 웨이 위드 그릴드 김치, 쌈장, 레터스 랩스, 오어 그린 어니언 샐러드. 인조이 유어 밀!'],
+ zh:['韩式烤肉的吃法\n烤盘烧热后，就可以开始烤肉了。\n泡菜、豆腐和糯米椒也请放在烤盘下方一起烤。\n* 烤盘中间火力最大，请在中间烤熟，烤好的肉移到上方即可。\n* 第一块建议只蘸盐吃，之后可以按个人口味搭配烤泡菜、包饭酱、生菜包肉、葱丝等一起享用。\n祝您用餐愉快！','한스 카오러우 더 츠파. 카오판 사오러 허우, 지우 커이 카이스 카오러우 러. 파오차이, 떠우푸 허 눠미쟈오 예 칭 팡짜이 카오판 샤팡 이치 카오. 카오판 중지엔 훠리 쭈이따, 칭 짜이 중지엔 카오수, 카오하오 더 러우 이따오 상팡 지커. 디이콰이 지엔이 즈 잔 옌 츠, 즈허우 커이 안 거런 커우웨이 따페이 카오 파오차이, 바오판쟝, 성차이 바오러우, 충쓰 덩 이치 샹용. 주 닌 용찬 위콰이!'],
+ ja:['焼肉の食べ方\n鉄板が温まったら、お肉を焼いてください。\nキムチ、豆腐、ししとうも下の方で一緒に焼いてください。\n※鉄板は真ん中が一番火力が強いので、真ん中で焼いて、焼けたお肉は上の方へ移してください。\n※最初の一切れは塩だけでお召し上がりいただくのがおすすめです。二切れ目からは焼きキムチ、サムジャン、サンチュ、ネギサラダなど、お好みでどうぞ。\nどうぞごゆっくりお召し上がりください。','야키니쿠노 타베카타. 텟판가 아타타맛타라, 오니쿠오 야이테 쿠다사이. 기무치, 토-후, 시시토-모 시타노 호-데 잇쇼니 야이테 쿠다사이. 텟판와 만나카가 이치반 카료쿠가 쓰요이노데, 만나카데 야이테, 야케타 오니쿠와 우에노 호-에 우쓰시테 쿠다사이. 사이쇼노 히토키레와 시오다케데 오메시아가리 이타다쿠노가 오스스메데스. 후타키레메카라와 야키기무치, 사무장, 산추, 네기사라다 나도, 오코노미데 도-조. 도-조 고윳쿠리 오메시아가리 쿠다사이.'],
+ th:['วิธีทานบาร์บีคิวเกาหลี\nเมื่อกระทะร้อนแล้ว เริ่มย่างเนื้อได้เลยค่ะ\nกิมจิ เต้าหู้ และพริกชิชิโตะ ย่างพร้อมกันที่ด้านล่างของกระทะได้เลยค่ะ\n* ตรงกลางกระทะไฟแรงที่สุด ย่างตรงกลางจนสุก แล้วย้ายเนื้อที่สุกแล้วไปไว้ด้านบนค่ะ\n* ชิ้นแรกแนะนำให้จิ้มเกลืออย่างเดียว ชิ้นต่อไปทานคู่กับกิมจิย่าง ซัมจัง ผักห่อ หรือต้นหอมซอย ได้ตามชอบเลยค่ะ\nขอให้อร่อยนะคะ','위티- 탄 바-비-키우 까올리-. 므-아 끄라타 런 래-우, 르-ㅁ 양 느-아 다이 러-이 카. 낌찌, 따오후-, 래 프릭 치치또, 양 프롬깐 티- 단랑 컹 끄라타 다이 러-이 카. 뜨롱끌랑 끄라타 파이 랭 티-쑷, 양 뜨롱끌랑 쫀 쑥, 래-우 야-이 느-아 티- 쑥 래-우 빠이 와이 단본 카. 친 래-ㄱ 내남 하이 찜 끌르-아 양 디-아우, 친 떠- 빠이 탄 쿠- 깝 낌찌 양, 쌈짱, 팍 허-, 르- 똔험 써-이 다이 따-ㅁ 촙 러-이 카. 커- 하이 아로-이 나카.']},
+];
+
+let trLang='en',trOpen=new Set([0]);
+function renderTrans(){const lname=Object.fromEntries(TR_LANGS)[trLang];
+  return `<div class="seg trseg">${TR_LANGS.map(([k,n])=>`<button class="${trLang===k?'on':''}" data-trl="${k}">${n}</button>`).join('')}</div>
+  ${trLang==='th'?'<div class="trnote">태국어는 문장 끝이 여자는 ค่ะ(카), 남자는 ครับ(크랍)이에요. 화면 글은 "카"로 썼어요. 남자 직원은 읽을 때 "크랍"으로 바꿔 읽으세요.</div>':''}
+  <div class="dsl">${TRANS.map((x,i)=>{const op=trOpen.has(i),v=x[trLang];return `<button class="dsr" data-tro="${i}"><span class="tt">${esc(x.t)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>
+   ${op?`<div class="dsb"><div class="trfx">${esc(v[0])}</div><div class="trko"><b>한국어</b> ${esc(x.ko)}</div>
+   <button class="btn full" data-trbig="${i}" style="margin-top:10px">손님에게 크게 보여주기</button></div>`:''}`}).join('')}</div>
+  <div class="t" style="font-size:12px;color:var(--sub);text-align:center;margin-top:10px">${lname} 문장 ${TRANS.length}개 · 문장 추가는 사장님이 Claude에게 보내주시면 넣어요</div>`;}
+function bindTrans(){
+  document.querySelectorAll('[data-trl]').forEach(b=>b.onclick=()=>{trLang=b.dataset.trl;render()});
+  document.querySelectorAll('[data-tro]').forEach(b=>b.onclick=()=>{const i=+b.dataset.tro;trOpen.has(i)?trOpen.delete(i):trOpen.add(i);render()});
+  document.querySelectorAll('[data-trbig]').forEach(b=>b.onclick=()=>{const x=TRANS[+b.dataset.trbig],v=x[trLang];
+    const o=document.createElement('div');o.className='trbig';o.innerHTML=`<div class="trbig-in"><div class="trbig-tx">${esc(v[0])}</div><button class="trbig-x">닫기</button></div>`;
+    document.body.appendChild(o);o.querySelector('.trbig-x').onclick=()=>o.remove();});}
+
+/* 인수인계 화면을 확인 안 하고 나갈 때 (빨간 테두리, 하나씩 확인) */
+function hoLeaveAsk(ids,goBack){const o=document.createElement('div');o.className='hopop ovl';
+  const draw=()=>{const L=ids.map(id=>S.handovers.find(h=>h.id===id)).filter(Boolean),left=L.filter(h=>!(h.re.ok||[]).includes(myId));
+    if(!left.length){o.remove();goBack();return}
+    o.innerHTML=`<div class="hopop-b hlred"><div class="t1">⚠ 아직 확인 안 했어요</div><div class="t2">인수인계 확인하셨습니까?</div><div class="t1" style="margin-bottom:10px">확인 안 한 인수인계 ${left.length}건</div>
+     ${left.map(h=>`<div class="hlli"><span>${h.item&&itemName(h.item)?esc(itemName(h.item))+' · ':''}${esc(h.text)}<small>${esc(uname(h.by))} 씀</small></span><button data-hlok="${h.id}">✓ 확인</button></div>`).join('')}
+     <button class="go" id="hlall">모두 확인하고 나가기</button><button class="go3" id="hlback">다시 보기</button></div>`;
+    o.querySelectorAll('[data-hlok]').forEach(b=>b.onclick=()=>{b.disabled=true;updateDoc(doc(db,'handovers',b.dataset.hlok),{'re.ok':arrayUnion(myId)}).then(()=>setTimeout(draw,50)).catch(fail)});
+    o.querySelector('#hlall').onclick=async()=>{try{await Promise.all(left.map(h=>updateDoc(doc(db,'handovers',h.id),{'re.ok':arrayUnion(myId)})));o.remove();goBack()}catch(e){fail(e)}};
+    o.querySelector('#hlback').onclick=()=>o.remove();};
+  draw();document.body.appendChild(o);}
 /* ===== 오늘(일) 화면 ===== */
 function hoCard(h){const seen=REACT.filter(([k])=>(h.re[k]||[]).length);
   return `<div class="ho">${h.item?`<div class="tag">${esc(itemName(h.item))}</div>`:''}<div class="meta"><span><b>${esc(uname(h.by))}</b> · ${hm(h.at)}</span>${h.edits.length?`<span>수정됨 · ${esc(uname(h.edits[h.edits.length-1].by))}</span>`:''}</div>
@@ -834,10 +893,10 @@ function renderDay(){
   const around=hosAround(viewDate), unseen=unseenOf(around).length;
   if(cat){
     if(cat==='ho') return renderPaper(d,dow,hosAround(viewDate));
-    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소',rpt:'마감 보고',rsv:'예약',docs:'자료 검색'};
+    const titles={duty:'근무 체크',close:'마감',ho:'인수인계',clean:'청소',rpt:'마감 보고',rsv:'예약',docs:'자료 검색',trans:'번역'};
     return `<button class="back" id="back">‹ ${d.getMonth()+1}월 ${d.getDate()}일 목록으로</button>
     <h2 class="sech">${titles[cat]}</h2><div class="t" style="color:var(--sub);font-size:13px">${d.getMonth()+1}월 ${d.getDate()}일 ${DOW[dow]}요일</div><div style="height:10px"></div>
-    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:cat==='rpt'?renderReport(viewDate):cat==='rsv'?renderRsv(viewDate):cat==='docs'?renderDocs():secClean}`;
+    ${cat==='duty'?secDuty:cat==='close'?secClose:cat==='ho'?secHo:cat==='rpt'?renderReport(viewDate):cat==='rsv'?renderRsv(viewDate):cat==='docs'?renderDocs():cat==='trans'?renderTrans():secClean}`;
   }
   // ── 두 번째 화면 (시안 C-3) ──
   const pm=punchMsg&&punchMsg.until>Date.now()?punchMsg:null;
@@ -867,6 +926,7 @@ function renderDay(){
     ${rowHtml('ho','인수인계',around.length?badge(unseen,'확인 완료'):'<span class="done-t">없음</span>')}
     ${rowHtml('clean','청소',badge(left(TASKS)))}
     ${(()=>{const n=rsvOf(viewDate).length;return rowHtml('rsv','예약',n?`<span class="cnt-b">${n}</span>`:'<span class="done-t">없음</span>')})()}
+    ${rowHtml('trans','번역','<span class="done-t">영어·중국어·일본어·태국어</span>')}
     ${rowHtml('docs','자료 검색',`<span class="done-t">${dsList().length}개</span>`)}
     ${REPORT_ON?rowHtml('rpt','마감 보고','<span class="done-t">카톡 양식 · 시험 중</span>'):''}
   </div>
@@ -875,7 +935,8 @@ function renderDay(){
 const dayRef=()=>doc(db,'days',viewDate);
 function bindDay(){
   if(!detail){$('cover').onclick=()=>{detail=true;window.scrollTo(0,0);render()};return}
-  const bk=$('back');if(bk)bk.onclick=()=>{if(cat)cat=null;else{detail=false;viewDate=bizDate(new Date())}window.scrollTo(0,0);ensureMonth();render()};
+  const goBack=()=>{if(cat)cat=null;else{detail=false;viewDate=bizDate(new Date())}window.scrollTo(0,0);ensureMonth();render()};
+  const bk=$('back');if(bk)bk.onclick=()=>{if(cat==='ho'&&viewDate===bizDate(new Date())){const pend=unseenOf(hosAround(viewDate)).filter(h=>h.by!==myId);if(pend.length)return hoLeaveAsk(pend.map(h=>h.id),goBack)}goBack()};
   document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;window.scrollTo(0,0);render()});
   if(!cat){$('prev').onclick=()=>{viewDate=addDays(viewDate,-1);ensureMonth();render()};$('next').onclick=()=>{viewDate=addDays(viewDate,1);ensureMonth();render()};
     $('gotoday').onclick=()=>{const t=bizDate(new Date());if(viewDate===t){detail=false}else viewDate=t;window.scrollTo(0,0);ensureMonth();render()};}
@@ -884,6 +945,7 @@ function bindDay(){
   if(cat==='rpt')bindReport(viewDate);
   if(cat==='rsv')bindRsv(viewDate);
   if(cat==='docs')bindDocs();
+  if(cat==='trans')bindTrans();
   document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.task,cur=(S.tasks[viewDate]||{})[id];
     if(cur){ if(cur.uid!==myId&&!isAdmin()){toast(uname(cur.uid)+'님이 체크한 항목이에요');return}

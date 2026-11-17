@@ -276,6 +276,18 @@ mark{background:var(--ink);color:#fff;border-radius:3px;padding:0 2px}
 .trmv-t{color:#bbb;font-size:12px;text-align:center;margin-top:10px}.trmv .trbig-x{background:#fff}
 .trhw{width:100%;display:block;margin-bottom:12px;border-radius:6px}.trhwt{white-space:pre-wrap;font-size:16px;line-height:1.6;border-bottom:1px solid var(--line);padding:12px 0}
 .mrot{position:fixed;inset:0;background:#111;z-index:90}.mrot img{position:absolute;left:50%;top:50%;width:100vh;height:100vw;max-width:none;object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}.mrot button{position:absolute;right:10px;bottom:10px;background:#fff;color:#1f1b16;border:none;border-radius:12px;padding:10px 18px;font-weight:800;font-size:16px;font-family:inherit;z-index:2}
+.dsc{position:relative;margin-top:10px;border-radius:12px;overflow:hidden;border:1.5px solid var(--ink);background:#000}
+.dsct{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.dsct::-webkit-scrollbar{display:none}
+.dscs{flex:0 0 100%;width:100%;height:260px;object-fit:contain;scroll-snap-align:center;display:block}
+.dscn{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.6);color:#fff;border-radius:10px;padding:2px 10px;font-size:13px}
+.dsca{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.9);font-size:22px;font-weight:900;color:#1f1b16;padding:0}.dsca.l{left:8px}.dsca.r{right:8px}
+.dscd{text-align:center;margin-top:8px}.dscd i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#d6cec3;margin:0 3px}.dscd i.on{background:var(--ink)}
+.dsfs{position:fixed;inset:0;z-index:95;background:#111;color:#fff;display:flex;flex-direction:column}
+.dsfs-h{display:flex;justify-content:space-between;padding:14px 16px;font-size:15px}
+.dsfs-t{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.dsfs-t::-webkit-scrollbar{display:none}
+.dsfs-p{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;overflow:auto}.dsfs-p img{max-width:100%;max-height:100%;object-fit:contain}
+.dsfs-a{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:44px;padding:8px}.dsfs-a.l{left:4px}.dsfs-a.r{right:4px}
+.dsfs-x{margin:12px 16px 20px;background:#fff;color:#111;border:none;border-radius:14px;padding:14px;font-size:17px;font-weight:800;font-family:inherit}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -718,7 +730,7 @@ function renderDocs(){return `<div class="dssb"><span>⌕</span><input id="dsq" 
 function dsBody(){const L=dsList(),q=dsQ.trim(),ad=isAdmin();
   const hit=q?L.filter(d=>((d.title||'')+' '+(d.body||'')).toLowerCase().includes(q.toLowerCase())):[];
   const item=(d,hitList)=>{const k=(hitList?'h:':'a:')+d.id,op=hitList?!dsOpen.has(k):dsOpen.has(k);
-    let full='';if(op&&d.thumb){const f=DSIMG[d.id];if(f===undefined)dsLoadImg(d.id);full=f?`<div class="dsrow n${f.length}">${f.map((x,i)=>`<img class="dsfull" data-dsbig="${d.id}|${i}" src="${x}" alt="">`).join('')}</div>`:'<div class="dsfull wait">사진 불러오는 중…</div>'}
+    let full='';if(op&&d.thumb){const f=DSIMG[d.id];if(f===undefined)dsLoadImg(d.id);full=f?(f.length?`<div class="dsc"><div class="dsct" data-dsc="${d.id}">${f.map((x,i)=>`<img class="dscs" data-dsbig="${d.id}|${i}" src="${x}" alt="">`).join('')}</div>${f.length>1?`<span class="dscn">1 / ${f.length}</span><button class="dsca l" data-dsg="${d.id}|-1">‹</button><button class="dsca r" data-dsg="${d.id}|1">›</button>`:''}</div>${f.length>1?`<div class="dscd">${f.map((x,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}`:''):'<div class="dsfull wait">사진 불러오는 중…</div>'}
     return `<button class="dsr" data-dso="${k}"><span class="tt">${dsMark(d.title,q)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>${op?`<div class="dsb">${dsMark(d.body,q)}${full}${ad?`<div class="dsa"><button data-dse="${d.id}">고치기</button><button data-dsd="${d.id}">지우기</button></div>`:''}</div>`:''}`};
   return `
    ${q?`<div class="dsres">"${esc(q)}" 찾은 자료 ${hit.length}개${hit.length?' · 누르면 내용이 접혀요':''}</div>${hit.length?`<div class="dsl">${hit.map(d=>item(d,true)).join('')}</div>`:''}<div style="height:12px"></div>`:''}
@@ -759,8 +771,17 @@ function bindDocsBody(){
   document.querySelectorAll('[data-dsd]').forEach(b=>b.onclick=()=>{const d=(S.docs||{})[b.dataset.dsd];if(!d)return;
     openSheet(`<h2>자료 지우기</h2><div class="t" style="margin-bottom:14px">"${esc(d.title)}" 자료를 지울까요?</div><div class="inline"><button class="btn ghost" id="ddc">취소</button><button class="btn red" id="ddo">지우기</button></div>`);
     $('ddc').onclick=closeSheet;$('ddo').onclick=()=>{const id=b.dataset.dsd;closeSheet();[0,1,2,3,4].forEach(i=>deleteDoc(doc(db,'settings',`dimg_${id}_${i}`)).catch(()=>{}));deleteDoc(doc(db,'settings','dimg_'+id)).catch(()=>{});setDoc(doc(db,'settings','docs'),{items:{[id]:deleteField()}},{merge:true}).then(()=>toast('지웠어요')).catch(fail)}});
-  document.querySelectorAll('[data-dsbig]').forEach(im=>im.onclick=()=>{const [bid,bi]=im.dataset.dsbig.split('|');openSheet(`<img class="big" src="${(DSIMG[bid]||[])[+bi||0]}" alt="" style="width:100%"><button class="btn ghost full" id="dbc" style="margin-top:10px">닫기</button>`);$('dbc').onclick=closeSheet});}
-
+  document.querySelectorAll('[data-dsc]').forEach(tr=>{const box=tr.parentElement,n=tr.children.length;
+    const upd=()=>{const k=Math.round(tr.scrollLeft/tr.clientWidth);const c=box.querySelector('.dscn');if(c)c.textContent=`${k+1} / ${n}`;const dots=box.nextElementSibling;if(dots&&dots.classList.contains('dscd'))[...dots.children].forEach((d,i)=>d.classList.toggle('on',i===k))};
+    tr.onscroll=()=>{clearTimeout(tr._t);tr._t=setTimeout(upd,60)};});
+  document.querySelectorAll('[data-dsg]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [id,dir]=b.dataset.dsg.split('|');const tr=b.parentElement.querySelector('.dsct');tr.scrollBy({left:tr.clientWidth*(+dir),behavior:'smooth'})});
+  document.querySelectorAll('[data-dsbig]').forEach(im=>im.onclick=()=>dsFull(...im.dataset.dsbig.split('|')));}
+function dsFull(id,start){const L=DSIMG[id]||[];if(!L.length)return;const o=document.createElement('div');o.className='dsfs';
+  o.innerHTML=`<div class="dsfs-h"><span>${esc(((S.docs||{})[id]||{}).title||'')}</span><b class="dsfs-n">${+start+1} / ${L.length}</b></div><div class="dsfs-t">${L.map(x=>`<div class="dsfs-p"><img src="${x}" alt=""></div>`).join('')}</div>${L.length>1?'<button class="dsfs-a l">‹</button><button class="dsfs-a r">›</button>':''}<button class="dsfs-x">닫기</button>`;
+  document.body.appendChild(o);const t=o.querySelector('.dsfs-t');requestAnimationFrame(()=>{t.scrollLeft=t.clientWidth*(+start)});
+  t.onscroll=()=>{clearTimeout(t._t);t._t=setTimeout(()=>{o.querySelector('.dsfs-n').textContent=`${Math.round(t.scrollLeft/t.clientWidth)+1} / ${L.length}`},60)};
+  o.querySelectorAll('.dsfs-a').forEach(b=>b.onclick=()=>t.scrollBy({left:t.clientWidth*(b.classList.contains('r')?1:-1),behavior:'smooth'}));
+  o.querySelector('.dsfs-x').onclick=()=>o.remove();}
 /* ===== 번역 (문장은 trans.js 에 — 사장님이 보내주면 Claude가 추가) ===== */
 const TR_LANGS=[['en','영어'],['zh','중국어'],['ja','일본어'],['th','태국어']];
 const TR_SUB={en:'English',zh:'中文',ja:'日本語',th:'ภาษาไทย'};

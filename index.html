@@ -275,6 +275,7 @@ mark{background:var(--ink);color:#fff;border-radius:3px;padding:0 2px}
 .trmv-sc{overflow:auto;-webkit-overflow-scrolling:touch}.trmv-sc img{display:block;width:100%;height:auto}.trmv-sc img.zoom{width:260%;max-width:none}
 .trmv-t{color:#bbb;font-size:12px;text-align:center;margin-top:10px}.trmv .trbig-x{background:#fff}
 .trhw{width:100%;display:block;margin-bottom:12px;border-radius:6px}.trhwt{white-space:pre-wrap;font-size:16px;line-height:1.6;border-bottom:1px solid var(--line);padding:12px 0}
+.mrot{position:fixed;inset:0;background:#111;z-index:90}.mrot img{position:absolute;left:50%;top:50%;width:100vh;height:100vw;max-width:none;object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}.mrot button{position:absolute;right:10px;bottom:10px;background:#fff;color:#1f1b16;border:none;border-radius:12px;padding:10px 18px;font-weight:800;font-size:16px;font-family:inherit;z-index:2}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -794,9 +795,7 @@ function bindTrans(){
   const hb=$('trhow');if(hb)hb.onclick=()=>{const o=document.createElement('div');o.className='trbig';
     o.innerHTML=`<div class="trbig-in"><img class="trhw" src="howto/how_stew_${trLang}.jpg" alt=""><img class="trhw" src="howto/how_bbq_${trLang}.jpg" alt="">${TRANS.map(x=>`<div class="trhwt">${esc(x[trLang][0])}</div>`).join('')}<button class="trbig-x">닫기</button></div>`;
     document.body.appendChild(o);o.querySelector('.trbig-x').onclick=()=>o.remove();};
-  const mb=$('trmenu');if(mb)mb.onclick=()=>{const o=document.createElement('div');o.className='trbig trmv';
-    o.innerHTML=`<div class="trmv-in"><div class="trmv-sc"><img src="menu/menu_${trLang}.jpg" alt="menu" id="trmimg"></div><div class="trmv-t">사진을 누르면 크게 · 휴대폰을 가로로 돌려도 돼요</div><button class="trbig-x">닫기</button></div>`;
-    document.body.appendChild(o);o.querySelector('#trmimg').onclick=e=>e.target.classList.toggle('zoom');o.querySelector('.trbig-x').onclick=()=>o.remove();};
+  const mb=$('trmenu');if(mb)mb.onclick=()=>{const o=document.createElement('div');o.className='mrot';o.innerHTML=`<img src="menu/menu_${trLang}.jpg" alt="menu" id="trmimg"><button>닫기</button>`;document.body.appendChild(o);o.querySelector('button').onclick=()=>o.remove();};
   document.querySelectorAll('[data-trl]').forEach(b=>b.onclick=()=>{trLang=b.dataset.trl;render()});
   document.querySelectorAll('[data-tro]').forEach(b=>b.onclick=()=>{const i=+b.dataset.tro;trOpen.has(i)?trOpen.delete(i):trOpen.add(i);render()});
   document.querySelectorAll('[data-trbig]').forEach(b=>b.onclick=()=>{const x=TRANS[+b.dataset.trbig],v=x[trLang];

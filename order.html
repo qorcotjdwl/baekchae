@@ -22,6 +22,7 @@
 .sh{position:fixed;inset:0;z-index:15}.shd{position:absolute;inset:0;background:rgba(31,27,22,.55)}.shb{position:absolute;left:0;right:0;bottom:0;max-height:85%;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:18px 18px 22px;max-width:560px;margin:0 auto}
 .sht{font-size:20px;font-weight:900;margin-bottom:6px}.cr{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #eee7dd;font-size:15px}.cr small{display:block;color:#9a9288;font-size:12px}.cr .v{white-space:nowrap}.cr .v b{margin-right:10px}
 .ctot{display:flex;justify-content:space-between;font-size:21px;font-weight:900;margin:12px 0}.cbt{display:flex;gap:8px}.cbt button{flex:1;border:2px solid #1f1b16;border-radius:12px;padding:13px;font-weight:800;font-size:15px;font-family:inherit;background:#fff;color:#1f1b16}.cbt .cs{background:#1f1b16;color:#fff}
+.hwimg img{width:100%;display:block;margin-bottom:12px;border-radius:6px}
 .hw{border-bottom:1px solid #eee7dd;padding:14px 0}.hw b{display:block;font-size:17px;margin-bottom:6px}.hw div{white-space:pre-wrap;font-size:16px;line-height:1.6}
 </style></head><body><div class="app" id="app"></div><div class="bar" id="bar"></div>
 <script>
@@ -76,7 +77,7 @@ function bind(){
  document.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){var k=b.dataset.m;if(Q[k]){Q[k]--;if(!Q[k])delete Q[k]}render()}});
  document.getElementById('br').onclick=function(){Q={};render()};
  document.getElementById('bm').onclick=function(){var o=ov('<div class="mimg"><img src="menu/menu_'+lang+'.jpg" alt=""></div>',true);o.querySelector('img').onclick=function(e){e.target.classList.toggle('zoom')}};
- document.getElementById('bh').onclick=function(){ov('<h2>'+D[lang].ui.how+'</h2>'+TRANS.map(function(x){return '<div class="hw"><div>'+esc(x[lang][0])+'</div></div>'}).join(''))};
+ document.getElementById('bh').onclick=function(){ov('<div class="hwimg"><img src="howto/how_stew_'+lang+'.jpg" alt=""><img src="howto/how_bbq_'+lang+'.jpg" alt=""></div>'+TRANS.map(function(x){return '<div class="hw"><div>'+esc(x[lang][0])+'</div></div>'}).join(''))};
  var bs=document.getElementById('bs');if(bs)bs.onclick=cart;
 }
 function cart(){var u=D[lang].ui,d=D[lang],sum=0,cnt=0;

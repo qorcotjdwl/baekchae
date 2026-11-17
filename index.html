@@ -274,6 +274,7 @@ mark{background:var(--ink);color:#fff;border-radius:3px;padding:0 2px}
 .trmv{background:#111}.trmv-in{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:16px 10px;box-sizing:border-box}
 .trmv-sc{overflow:auto;-webkit-overflow-scrolling:touch}.trmv-sc img{display:block;width:100%;height:auto}.trmv-sc img.zoom{width:260%;max-width:none}
 .trmv-t{color:#bbb;font-size:12px;text-align:center;margin-top:10px}.trmv .trbig-x{background:#fff}
+.trhw{width:100%;display:block;margin-bottom:12px;border-radius:6px}.trhwt{white-space:pre-wrap;font-size:16px;line-height:1.6;border-bottom:1px solid var(--line);padding:12px 0}
 .seg{display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;margin-bottom:12px}.seg button{flex:1;border:none;background:none;border-radius:10px;padding:11px 0;font-weight:700;color:var(--sub);font-size:15px}.seg button small{font-weight:500;font-size:12px}.seg button.on{background:var(--ink);color:#fff}.cmts{margin:10px 0 0 36px}.cmts .ho{margin-bottom:8px}.inline>*{min-width:0}.pgrid{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;margin-bottom:12px}.pgrid label{font-size:13px;color:var(--sub)}.pgrid input{min-width:0;width:100%;box-sizing:border-box;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 6px;background:#fff}.tag{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
 </style>
 </head>
@@ -784,12 +785,15 @@ let trLang='en',trOpen=new Set([0]);
 function renderTrans(){const lname=Object.fromEntries(TR_LANGS)[trLang];
   return `<div class="seg trseg">${TR_LANGS.map(([k,n])=>`<button class="${trLang===k?'on':''}" data-trl="${k}">${n}${TR_SUB[k]?`<small class="trsub">(${TR_SUB[k]})</small>`:''}</button>`).join('')}</div>
   ${trLang==='th'?'<div class="trnote">태국어는 문장 끝이 여자는 ค่ะ(카), 남자는 ครับ(크랍)이에요. 화면 글은 "카"로 썼어요. 남자 직원은 읽을 때 "크랍"으로 바꿔 읽으세요.</div>':''}
-  <button class="btn full trmenu" id="trmenu">메뉴판 보기 · ${TR_SUB[trLang]||lname}</button>
+  <div class="inline" style="margin-bottom:10px"><button class="btn trmenu" id="trmenu" style="margin:0">메뉴판 보기</button><button class="btn trmenu" id="trhow" style="margin:0">먹는 법 보기</button></div>
   <div class="dsl">${TRANS.map((x,i)=>{const op=trOpen.has(i),v=x[trLang];return `<button class="dsr" data-tro="${i}"><span class="tt">${esc(x.t)}</span><span class="ar">${op?'⌃':'⌄'}</span></button>
    ${op?`<div class="dsb"><div class="trfx">${esc(v[0])}</div><div class="trko"><b>한국어</b> ${esc(x.ko)}</div>
    <button class="btn full" data-trbig="${i}" style="margin-top:10px">손님에게 크게 보여주기</button></div>`:''}`}).join('')}</div>
   <div class="t" style="font-size:12px;color:var(--sub);text-align:center;margin-top:10px">${lname} 문장 ${TRANS.length}개 · 문장 추가는 사장님이 Claude에게 보내주시면 넣어요</div>`;}
 function bindTrans(){
+  const hb=$('trhow');if(hb)hb.onclick=()=>{const o=document.createElement('div');o.className='trbig';
+    o.innerHTML=`<div class="trbig-in"><img class="trhw" src="howto/how_stew_${trLang}.jpg" alt=""><img class="trhw" src="howto/how_bbq_${trLang}.jpg" alt="">${TRANS.map(x=>`<div class="trhwt">${esc(x[trLang][0])}</div>`).join('')}<button class="trbig-x">닫기</button></div>`;
+    document.body.appendChild(o);o.querySelector('.trbig-x').onclick=()=>o.remove();};
   const mb=$('trmenu');if(mb)mb.onclick=()=>{const o=document.createElement('div');o.className='trbig trmv';
     o.innerHTML=`<div class="trmv-in"><div class="trmv-sc"><img src="menu/menu_${trLang}.jpg" alt="menu" id="trmimg"></div><div class="trmv-t">사진을 누르면 크게 · 휴대폰을 가로로 돌려도 돼요</div><button class="trbig-x">닫기</button></div>`;
     document.body.appendChild(o);o.querySelector('#trmimg').onclick=e=>e.target.classList.toggle('zoom');o.querySelector('.trbig-x').onclick=()=>o.remove();};

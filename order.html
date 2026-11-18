@@ -24,6 +24,13 @@
 .ctot{display:flex;justify-content:space-between;font-size:21px;font-weight:900;margin:12px 0}.cbt{display:flex;gap:8px}.cbt button{flex:1;border:2px solid #1f1b16;border-radius:12px;padding:13px;font-weight:800;font-size:15px;font-family:inherit;background:#fff;color:#1f1b16}.cbt .cs{background:#1f1b16;color:#fff}
 .mrot{position:fixed;inset:0;background:#111;z-index:90}.mrot img{position:absolute;left:50%;top:50%;width:100vh;height:100vw;max-width:none;object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}.mrot button{position:absolute;right:10px;bottom:10px;background:#fff;color:#1f1b16;border:none;border-radius:12px;padding:10px 18px;font-weight:800;font-size:16px;font-family:inherit;z-index:2}
 .cut{display:block;font-style:normal;font-size:13px;color:#5a534b}
+.pc{border:2.5px solid #1f1b16}.pcr{display:flex;justify-content:space-between;align-items:center}.pcr .n b{font-size:18px}.req{color:#d32f2f;font-size:12px}.pcr .q b{font-size:20px;width:26px}
+.rl{font-size:13px;line-height:1.6;margin-top:8px;border-top:1px solid #eee7dd;padding-top:8px}.rlh{font-weight:900;font-size:14px;margin-bottom:2px}.rls{color:#7a7268;font-size:12px}
+.err{margin:0 12px 8px;background:#fdecea;border:2px solid #d32f2f;color:#b71c1c;border-radius:12px;padding:10px 12px;font-size:14px;font-weight:700}.bt{color:#ff8a80;font-weight:700}
+.pp{position:fixed;inset:0;z-index:40;background:rgba(31,27,22,.65);display:flex;align-items:center;justify-content:center;padding:16px}.ppb{background:#fff;border-radius:20px;padding:22px 18px 16px;width:100%;max-width:440px;text-align:center}
+.ppw{font-size:14px;color:#7a7268}.ppt{font-size:24px;font-weight:900;margin:4px 0 14px}.ppc{display:flex;justify-content:center;align-items:center;gap:24px}.ppc button{width:52px;height:52px;border:2px solid #1f1b16;border-radius:50%;background:#fff;font-size:28px;font-weight:900;color:#1f1b16;padding:0}.ppc button.on{background:#1f1b16;color:#fff}.ppc b{font-size:44px;min-width:40px}
+.ppb .rl{text-align:left;font-size:14px;margin-top:14px}.ppgo{width:100%;background:#1f1b16;color:#fff;border:none;border-radius:14px;padding:15px;font-weight:800;font-size:17px;margin-top:14px;font-family:inherit}
+.pplang{display:flex;gap:4px;margin-top:10px}.pplang button{flex:1;border:none;background:#f4f1ec;border-radius:9px;padding:7px 0;font-size:12px;font-weight:700;color:#7a7268;font-family:inherit}.pplang .on{background:#1f1b16;color:#fff}
 .hwimg img{width:100%;display:block;margin-bottom:12px;border-radius:6px}
 .hw{border-bottom:1px solid #eee7dd;padding:14px 0}.hw b{display:block;font-size:17px;margin-bottom:6px}.hw div{white-space:pre-wrap;font-size:16px;line-height:1.6}
 </style></head><body><div class="app" id="app"></div><div class="bar" id="bar"></div>
@@ -57,11 +64,48 @@ function won(n){var v=n.toLocaleString('en-US');return lang==='en'?'₩'+v:lang=
 var PR={},KO={};G.forEach(function(g){g[2].forEach(function(it){PR[it[0]]=it[2];KO[it[0]]=it[1]})});
 var MEAT=['belly','jowl','collar'];
 function meatN(){return MEAT.reduce(function(a,k){return a+(Q[k]||0)},0)}
+var P=0;
+var R={
+en:{ppl:'How many people?',start:'Start ordering',wel:'Welcome to BAEKCHAE',lbl:'People',req:'required',head:function(n){return 'Minimum order for '+n+(n>1?' people':' person')},
+ stew:function(n){return n<=2?'Kimchi stew: at least '+n+' serving'+(n>1?'s':''):'Kimchi stew: '+n+' servings, or '+(n-1)+' servings + 1 side dish'},
+ meat:function(m){return 'Grilled pork: at least '+m+' servings (mixing cuts OK) · 1 kimchi stew can be added'},
+ side:'Side dishes: rolled omelet, cheese rolled omelet, grilled ham',extra:'Drinks, side dishes and add-ons can be ordered anytime',or:'or'},
+zh:{ppl:'请问几位？',start:'开始点餐',wel:'欢迎光临 BAEKCHAE',lbl:'人数',req:'必选',head:function(n){return n+'位的最低点餐'},
+ stew:function(n){return n<=2?'泡菜汤：至少'+n+'人份':'泡菜汤：'+n+'人份，或'+(n-1)+'人份 + 小菜1份'},
+ meat:function(m){return '烤猪肉：至少'+m+'人份（可混搭部位）· 可加点泡菜汤1人份'},
+ side:'小菜：鸡蛋卷、芝士鸡蛋卷、烤火腿',extra:'酒水、小菜、加料可随时加点',or:'或'},
+ja:{ppl:'何名様ですか？',start:'注文を始める',wel:'BAEKCHAEへようこそ',lbl:'人数',req:'必須',head:function(n){return n+'名様の最低注文'},
+ stew:function(n){return n<=2?'キムチチゲ：'+n+'人前以上':'キムチチゲ：'+n+'人前、または'+(n-1)+'人前＋サイドメニュー1品'},
+ meat:function(m){return '豚焼肉：'+m+'人前以上（部位の組み合わせ可）・キムチチゲ1人前の追加可'},
+ side:'サイドメニュー：韓国風卵焼き、チーズ卵焼き、ハム焼き',extra:'お酒・ドリンク・サイド・追加トッピングはいつでも注文できます',or:'または'},
+th:{ppl:'กี่ท่านคะ?',start:'เริ่มสั่งอาหาร',wel:'ยินดีต้อนรับสู่ BAEKCHAE',lbl:'จำนวนคน',req:'จำเป็น',head:function(n){return 'ขั้นต่ำสำหรับ '+n+' ท่าน'},
+ stew:function(n){return n<=2?'ซุปกิมจิหมู: อย่างน้อย '+n+' ที่':'ซุปกิมจิหมู: '+n+' ที่ หรือ '+(n-1)+' ที่ + เมนูเคียง 1 อย่าง'},
+ meat:function(m){return 'หมูย่าง: อย่างน้อย '+m+' ที่ (เลือกผสมได้) · สั่งซุปกิมจิเพิ่ม 1 ที่ได้'},
+ side:'เมนูเคียง: ไข่ม้วน, ไข่ม้วนชีส, แฮมย่าง',extra:'เครื่องดื่ม เมนูเคียง และท็อปปิ้งสั่งเพิ่มได้ตลอด',or:'หรือ'}};
+var SIDES=['egg','cheese','ham'];
+function cntOf(L){return L.reduce(function(a,k){return a+(Q[k]||0)},0)}
+function meatMin(){return Math.max(2,P-1)}
+function chk(){var r=R[lang],m=cntOf(MEAT),st=Q.stew||0,sd=cntOf(SIDES);
+ if(m>0){if(m<meatMin())return {bad:'meat',msg:r.meat(meatMin())};return {}}
+ if(st>0){if(st>=P||(P>=3&&st===P-1&&sd>=1))return {};return {bad:'stew',msg:r.stew(P)}}
+ return {}}
+function rulesHtml(n){var r=R[lang];return '<div class="rl"><div class="rlh">'+esc(r.head(n))+'</div><div>• '+esc(r.stew(n))+'</div><div>• '+esc(r.meat(Math.max(2,n-1)))+'</div><div class="rls">'+esc(r.side)+'</div><div class="rls">'+esc(r.extra)+'</div></div>'}
+function askPeople(){var n=P||2,o=document.createElement('div');o.className='pp';
+ var draw=function(){var r=R[lang];o.innerHTML='<div class="ppb"><div class="ppw">'+esc(r.wel)+'</div><div class="ppt">'+esc(r.ppl)+'</div><div class="ppc"><button data-pd="-1">−</button><b>'+n+'</b><button class="on" data-pd="1">+</button></div>'+rulesHtml(n)+'<button class="ppgo">'+esc(r.start)+'</button><div class="pplang">'+TR_LANGS.map(function(l){return '<button class="'+(lang===l[0]?'on':'')+'" data-pl="'+l[0]+'">'+TR_SUB[l[0]]+'</button>'}).join('')+'</div></div>';
+  o.querySelectorAll('[data-pd]').forEach(function(b){b.onclick=function(){n=Math.max(1,n+(+b.dataset.pd));draw()}});
+  o.querySelectorAll('[data-pl]').forEach(function(b){b.onclick=function(){lang=b.dataset.pl;render();draw()}});
+  o.querySelector('.ppgo').onclick=function(){P=n;o.remove();render()}};
+ draw();document.body.appendChild(o)}
+
 function render(){var d=D[lang],u=d.ui;document.documentElement.lang=lang;
  var h='<div class="top">BAEKCHAE <small translate="no">백채 김치찌개</small></div><div class="tb">'+TR_LANGS.map(function(l){return '<button class="'+(lang===l[0]?'on':'')+'" data-l="'+l[0]+'">'+TR_SUB[l[0]]+'</button>'}).join('')+'</div>';
  h+='<div class="btns"><button id="bm">'+u.menu+'</button><button id="bh">'+u.how+'</button></div>';
+ var ck=chk(),rr=R[lang];
+ h+='<div class="cd pc"><div class="pcr"><span class="n"><b>'+esc(rr.lbl)+'</b> <small class="req">'+esc(rr.req)+'</small></span><span class="q"><button data-pm="-1">−</button><b>'+(P||'-')+'</b><button class="on" data-pm="1">+</button></span></div>'+(P?rulesHtml(P):'')+'</div>';
+ if(ck.bad)h+='<div class="err">'+esc(ck.msg)+'</div>';
  G.forEach(function(g){h+='<div class="cd"><h3>'+esc(d.title[g[1]])+'</h3>';
-  if(g[0]==='bbq'){var mn=meatN();h+='<div class="min'+(mn===1?' bad':'')+'">'+esc(u.min)+'</div>'}
+  if(g[0]==='bbq'&&P){h+='<div class="min'+(ck.bad==='meat'?' bad':'')+'">'+esc(rr.meat(meatMin()))+'</div>'}
+  if(g[0]==='meal'&&P){h+='<div class="min'+(ck.bad==='stew'?' bad':'')+'">'+esc(rr.stew(P))+'</div>'}
   if(g[0]==='meal')h+='<div class="nt">'+esc(d.note)+'</div>';
   g[2].forEach(function(it){var id=it[0],n=Q[id]||0;
    h+='<div class="r">'+(id==='stew'?'<img src="menu/jjigae.png" alt="">':'')+'<span class="n">'+esc(d.nm[id])+(id==='stew'?' · '+esc(d.one):'')+(d.cut[id]?'<i class="cut">'+esc(d.cut[id])+'</i>':'')+'<small translate="no">'+esc(it[1])+'</small></span><span class="p">'+won(it[2])+'</span><span class="q"><button data-m="'+id+'">−</button><b>'+n+'</b><button class="'+(n?'on':'')+'" data-p="'+id+'">+</button></span></div>'});
@@ -69,11 +113,12 @@ function render(){var d=D[lang],u=d.ui;document.documentElement.lang=lang;
  h+='<div style="text-align:center;margin:10px 0"><button id="br" style="border:none;background:none;color:#7a7268;text-decoration:underline;font-family:inherit;font-size:13px">'+u.reset+'</button></div>';
  document.getElementById('app').innerHTML=h;
  var cnt=0,sum=0;Object.keys(Q).forEach(function(k){cnt+=Q[k];sum+=Q[k]*PR[k]});
- var bad=meatN()===1;
- document.getElementById('bar').innerHTML='<div class="in"><div><div class="t">'+(bad?esc(u.minw):cnt?cnt+' '+u.sel:esc(u.none))+'</div><div class="s">'+u.tot+' '+won(sum)+'</div></div><button id="bs"'+(cnt&&!bad?'':' disabled')+'>'+u.conf+'</button></div>';
+ var bad=!P||!!ck.bad;
+ document.getElementById('bar').innerHTML='<div class="in"><div><div class="t">'+(ck.bad?'<span class="bt">'+esc(ck.msg)+'</span>':cnt?cnt+' '+u.sel:esc(u.none))+'</div><div class="s">'+u.tot+' '+won(sum)+'</div></div><button id="bs"'+(cnt&&!bad?'':' disabled')+'>'+u.conf+'</button></div>';
  bind()}
 function ov(html,dark){var o=document.createElement('div');o.className='ov'+(dark?' dark':'');o.innerHTML='<div class="in">'+html+'<button class="cl">'+D[lang].ui.close+'</button></div>';document.body.appendChild(o);o.querySelector('.cl').onclick=function(){o.remove()};return o}
 function bind(){
+ document.querySelectorAll('[data-pm]').forEach(function(b){b.onclick=function(){P=Math.max(1,(P||1)+(+b.dataset.pm));render()}});
  document.querySelectorAll('[data-l]').forEach(function(b){b.onclick=function(){lang=b.dataset.l;render()}});
  document.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){Q[b.dataset.p]=(Q[b.dataset.p]||0)+1;render()}});
  document.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){var k=b.dataset.m;if(Q[k]){Q[k]--;if(!Q[k])delete Q[k]}render()}});
@@ -90,6 +135,6 @@ function cart(){var u=D[lang].ui,d=D[lang],sum=0,cnt=0;
  o.querySelector('.cs').onclick=function(){o.remove();staff()};}
 function staff(){var u=D[lang].ui,sum=0;
   var rows=Object.keys(PR).filter(function(k){return Q[k]}).map(function(k){sum+=Q[k]*PR[k];return '<div class="ol"><div><div class="k" translate="no">'+esc(KO[k])+'</div><div class="f">'+esc(D[lang].nm[k])+'</div></div><div class="x">× '+Q[k]+'</div></div>'}).join('');
-  ov('<div style="background:#1f1b16;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:6px"><div translate="no" style="font-size:20px;font-weight:900">직원 확인용 · 주문 내역</div><div style="font-size:13px;opacity:.8;margin-top:2px">'+esc(u.staff)+'</div></div>'+rows+'<div class="otot"><span>합계'+(lang?' · '+u.tot:'')+'</span><span>'+sum.toLocaleString('ko-KR')+'원</span></div>')}
-render();
+  ov('<div style="background:#1f1b16;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:6px"><div translate="no" style="font-size:20px;font-weight:900">직원 확인용 · 주문 내역 · '+P+'명</div><div style="font-size:13px;opacity:.8;margin-top:2px">'+esc(u.staff)+'</div></div>'+rows+'<div class="otot"><span>합계'+(lang?' · '+u.tot:'')+'</span><span>'+sum.toLocaleString('ko-KR')+'원</span></div>')}
+render();askPeople();
 </script></body></html>

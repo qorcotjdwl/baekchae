@@ -31,6 +31,8 @@
 .ppw{font-size:14px;color:#7a7268}.ppt{font-size:24px;font-weight:900;margin:4px 0 14px}.ppc{display:flex;justify-content:center;align-items:center;gap:24px}.ppc button{width:52px;height:52px;border:2px solid #1f1b16;border-radius:50%;background:#fff;font-size:28px;font-weight:900;color:#1f1b16;padding:0}.ppc button.on{background:#1f1b16;color:#fff}.ppc b{font-size:44px;min-width:40px}
 .ppb .rl{text-align:left;font-size:14px;margin-top:14px}.ppgo{width:100%;background:#1f1b16;color:#fff;border:none;border-radius:14px;padding:15px;font-weight:800;font-size:17px;margin-top:14px;font-family:inherit}
 .pplang{display:flex;gap:4px;margin-top:10px}.pplang button{flex:1;border:none;background:#f4f1ec;border-radius:9px;padding:7px 0;font-size:12px;font-weight:700;color:#7a7268;font-family:inherit}.pplang .on{background:#1f1b16;color:#fff}
+.r .fi{width:64px;height:64px;object-fit:cover;border-radius:10px;flex:none;border:1px solid #e4ded5}
+.fbig{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}.fbig img{width:100%;max-width:440px;border-radius:14px}.fbn{color:#fff;font-size:20px;font-weight:800;margin:14px 0}.fbig button{background:#fff;border:none;border-radius:12px;padding:12px 30px;font-weight:800;font-size:16px;font-family:inherit}
 .hwimg img{width:100%;display:block;margin-bottom:12px;border-radius:6px}
 .hw{border-bottom:1px solid #eee7dd;padding:14px 0}.hw b{display:block;font-size:17px;margin-bottom:6px}.hw div{white-space:pre-wrap;font-size:16px;line-height:1.6}
 </style></head><body><div class="app" id="app"></div><div class="bar" id="bar"></div>
@@ -82,7 +84,7 @@ th:{ppl:'กี่ท่านคะ?',start:'เริ่มสั่งอา�
  stew:function(n){return n<=2?'ซุปกิมจิหมู: อย่างน้อย '+n+' ที่':'ซุปกิมจิหมู: '+n+' ที่ หรือ '+(n-1)+' ที่ + เมนูเคียง 1 อย่าง'},
  meat:function(m){return 'หมูย่าง: อย่างน้อย '+m+' ที่ (เลือกผสมได้) · สั่งซุปกิมจิเพิ่ม 1 ที่ได้'},
  side:'เมนูเคียง: ไข่ม้วน, ไข่ม้วนชีส, แฮมย่าง',extra:'เครื่องดื่ม เมนูเคียง และท็อปปิ้งสั่งเพิ่มได้ตลอด',or:'หรือ'}};
-var SIDES=['egg','cheese','ham'];
+var SIDES=['egg','cheese','ham'];var FOOD=['stew','egg','cheese','ham','belly','jowl','collar'];
 function cntOf(L){return L.reduce(function(a,k){return a+(Q[k]||0)},0)}
 function meatMin(){return Math.max(2,P-1)}
 function chk(){var r=R[lang],m=cntOf(MEAT),st=Q.stew||0,sd=cntOf(SIDES);
@@ -108,7 +110,7 @@ function render(){var d=D[lang],u=d.ui;document.documentElement.lang=lang;
   if(g[0]==='meal'&&P){h+='<div class="min'+(ck.bad==='stew'?' bad':'')+'">'+esc(rr.stew(P))+'</div>'}
   if(g[0]==='meal')h+='<div class="nt">'+esc(d.note)+'</div>';
   g[2].forEach(function(it){var id=it[0],n=Q[id]||0;
-   h+='<div class="r">'+(id==='stew'?'<img src="menu/jjigae.png" alt="">':'')+'<span class="n">'+esc(d.nm[id])+(id==='stew'?' · '+esc(d.one):'')+(d.cut[id]?'<i class="cut">'+esc(d.cut[id])+'</i>':'')+'<small translate="no">'+esc(it[1])+'</small></span><span class="p">'+won(it[2])+'</span><span class="q"><button data-m="'+id+'">−</button><b>'+n+'</b><button class="'+(n?'on':'')+'" data-p="'+id+'">+</button></span></div>'});
+   h+='<div class="r">'+(FOOD.indexOf(id)>=0?'<img class="fi" data-fi="'+id+'" src="food/'+id+'.jpg" alt="">':'')+'<span class="n">'+esc(d.nm[id])+(id==='stew'?' · '+esc(d.one):'')+(d.cut[id]?'<i class="cut">'+esc(d.cut[id])+'</i>':'')+'<small translate="no">'+esc(it[1])+'</small></span><span class="p">'+won(it[2])+'</span><span class="q"><button data-m="'+id+'">−</button><b>'+n+'</b><button class="'+(n?'on':'')+'" data-p="'+id+'">+</button></span></div>'});
   h+='</div>'});
  h+='<div style="text-align:center;margin:10px 0"><button id="br" style="border:none;background:none;color:#7a7268;text-decoration:underline;font-family:inherit;font-size:13px">'+u.reset+'</button></div>';
  document.getElementById('app').innerHTML=h;
@@ -118,6 +120,7 @@ function render(){var d=D[lang],u=d.ui;document.documentElement.lang=lang;
  bind()}
 function ov(html,dark){var o=document.createElement('div');o.className='ov'+(dark?' dark':'');o.innerHTML='<div class="in">'+html+'<button class="cl">'+D[lang].ui.close+'</button></div>';document.body.appendChild(o);o.querySelector('.cl').onclick=function(){o.remove()};return o}
 function bind(){
+ document.querySelectorAll('[data-fi]').forEach(function(im){im.onclick=function(){var o=document.createElement('div');o.className='fbig';o.innerHTML='<img src="food/'+im.dataset.fi+'.jpg" alt=""><div class="fbn">'+esc(D[lang].nm[im.dataset.fi])+'</div><button>'+esc(D[lang].ui.close)+'</button>';document.body.appendChild(o);o.onclick=function(){o.remove()}}});
  document.querySelectorAll('[data-pm]').forEach(function(b){b.onclick=function(){P=Math.max(1,(P||1)+(+b.dataset.pm));render()}});
  document.querySelectorAll('[data-l]').forEach(function(b){b.onclick=function(){lang=b.dataset.l;render()}});
  document.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){Q[b.dataset.p]=(Q[b.dataset.p]||0)+1;render()}});
